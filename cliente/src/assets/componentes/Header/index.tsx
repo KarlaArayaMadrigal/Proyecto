@@ -4,13 +4,13 @@ import Menu from "../Menu";
 
 const Curso = styled.h1`
   display: flex;
-  font-size: 10px;
+  font-size: 15px;
   color: white;
   background-color: black;
   justify-content: center;
   height: 20px;
   align-items: center;
-  font-family: 'Lucida Sans';
+  font-family: 'Afacad Flux', sans-serif;
 `;
 
 const Contenido = styled.div`
@@ -22,7 +22,7 @@ const Contenido = styled.div`
 
 const Tienda = styled.h2`
   margin: 0;
-  font-family: Impact, sans-serif;
+  font-family: 'Protest Strike', sans-serif;
   font-size: 40px;
   color: black;
   margin-left: 60px;

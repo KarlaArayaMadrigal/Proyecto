@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import SeleccionOpciones from "../Seleccion";
 
 const Lista = styled.ul`
   list-style-type: none; 
@@ -6,52 +7,26 @@ const Lista = styled.ul`
   gap: 20px;
   align-items: center;
   padding: 0; 
-  margin-left: 60px;
-`;
-
-const ListaOpciones = styled.li`
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Seleccion = styled.select`
-  border: none;
-  font-family: sans-serif;
-  background-color: transparent;
-  color: black;
-  cursor: pointer;
-  padding: 5px;
-  width: 75px;
-  font-size: 13px;
+  margin-left: 50px;
 `;
 
 const Enlace = styled.a`
   color: black;
-  font-family: sans-serif;
-  text-decoration: none; /* Elimina el subrayado */
-  font-size: 13px;
+  font-family: 'Afacad Flux', sans-serif;
+  text-decoration: none; 
+  font-size: 16px;
   
   &:hover {
-    text-decoration: underline; /* Opcional: subrayado al pasar el cursor */
+    text-decoration: solid;
   }
 `;
 
 const Menu = () => {
+  console.log("Menu renderizado");
   return (
     <div>
       <Lista>
-        <ListaOpciones>
-          <Seleccion id="tienda-options">
-            <option value="" disabled selected>
-              Tienda
-            </option>
-            <option value="ropa">Ropa</option>
-            <option value="zapatos">Zapatos</option>
-            <option value="accesorios">Accesorios</option>
-          </Seleccion>
-        </ListaOpciones>
+        <SeleccionOpciones/>
         <li><Enlace href="#">Promociones</Enlace></li>
         <li><Enlace href="#">Nuevas Prendas</Enlace></li>
         <li><Enlace href="#">Marcas</Enlace></li>
