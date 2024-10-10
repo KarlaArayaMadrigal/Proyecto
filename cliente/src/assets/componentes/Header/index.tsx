@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom"; // Importa el hook para la navegación
 import Navegacion from "../NavBar";
 import Menu from "../Menu";
 
@@ -15,9 +16,9 @@ const Curso = styled.h1`
 
 const Contenido = styled.div`
   display: flex;
-  justify-content: space-between; /* Alinea los elementos horizontalmente */
-  align-items: center; /* Alinea los elementos verticalmente */
-  width: 100%; /* Ocupa todo el ancho disponible */ /* Añade padding para separar los elementos de los bordes */
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 const Tienda = styled.h2`
@@ -26,14 +27,21 @@ const Tienda = styled.h2`
   font-size: 40px;
   color: black;
   margin-left: 60px;
+  cursor: pointer; 
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    navigate("/"); 
+  };
+
   return (
     <div>
       <Curso>Desarrollo de Plataformas Abiertas</Curso>
       <Contenido>
-        <Tienda>LuKa.com</Tienda>
+        <Tienda onClick={handleRedirect}>LuKa.com</Tienda> {/* Añade el evento onClick */}
         <Menu />
         <Navegacion />
       </Contenido>
@@ -42,4 +50,5 @@ const Header = () => {
 };
 
 export default Header;
+
 

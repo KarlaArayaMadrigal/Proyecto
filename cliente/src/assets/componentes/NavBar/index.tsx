@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom"; // Importa Link para la navegación
 
 // Contenedor del form y los íconos
 const Contenido = styled.div`
@@ -69,9 +70,11 @@ const Navegacion = () => {
       {/* Contenedor para los íconos del carrito y perfil */}
       <IconContainer>
         {/* Ícono de carrito */}
-        <Icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M7 18c-1.104 0-1.99.896-1.99 2S5.896 22 7 22s2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-1.99.896-1.99 2S15.896 22 17 22s2-.896 2-2-.896-2-2-2zM7.938 16l1.362-5.446 8.445-.002-1.69 6.746H7.938zM6.82 9l-.57 2.282L4 7h16l-3.444 9.746H8.362l-.58 2.002H19V19H5V17h1.82z" />
-        </Icon>
+        <Link to="/carrito"> {/* Envuelve el ícono de carrito en un Link */}
+          <Icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M7 18c-1.104 0-1.99.896-1.99 2S5.896 22 7 22s2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-1.99.896-1.99 2S15.896 22 17 22s2-.896 2-2-.896-2-2-2zM7.938 16l1.362-5.446 8.445-.002-1.69 6.746H7.938zM6.82 9l-.57 2.282L4 7h16l-3.444 9.746H8.362l-.58 2.002H19V19H5V17h1.82z" />
+          </Icon>
+        </Link>
 
         {/* Ícono de perfil */}
         <Icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -83,4 +86,5 @@ const Navegacion = () => {
 };
 
 export default Navegacion;
+
 
