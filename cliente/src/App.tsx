@@ -5,11 +5,10 @@ import NuevosProductos from "./assets/componentes/NuevosProductos";
 
 
 
-
-
 const App = () => {
   return (
     <>
+   
       <Header />
       <Banner />
       <NuevosProductos/>

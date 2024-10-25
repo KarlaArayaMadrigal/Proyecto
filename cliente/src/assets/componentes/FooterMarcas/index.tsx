@@ -14,13 +14,14 @@ const Footer = styled.footer`
 `;
 
 const FooterImage = styled.img`
+display: block;
   height: 70px; /* Altura fija para todas las imágenes */
   width: 70px; /* Ancho fijo para todas las imágenes */
   object-fit: contain; /* Mantiene la proporción de la imagen sin distorsionarla */
   padding: 40px;
 `;
 
-const Marcas = () => {
+const MarcaProducto = () => {
   return (
     <Footer>
       <FooterImage src="/src/assets/img/nike.png" alt="Nike" />
@@ -33,4 +34,4 @@ const Marcas = () => {
   );
 };
 
-export default Marcas;
+export default MarcaProducto;

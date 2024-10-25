@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SeleccionOpciones from "../Seleccion";
-import { Link, useLocation } from "react-router-dom"; // Importa el componente Link y useLocation
+import { Link, useLocation } from "react-router-dom"; 
 
 const Lista = styled.ul`
   list-style-type: none; 
@@ -11,22 +11,22 @@ const Lista = styled.ul`
   margin-left: 50px;
 `;
 
-const Enlace = styled(Link)<{ isSelected: boolean }>` // Añadir prop para el estado seleccionado
+const Enlace = styled(Link)<{ isSelected: boolean }>` 
   color: black;
   font-family: 'Afacad Flux', sans-serif;
   text-decoration: none; 
   font-size: 16px;
-  padding: 5px 10px; // Agrega un poco de padding para el borde
+  padding: 5px 10px; 
 
-  border: ${({ isSelected }) => (isSelected ? "2px solid black" : "none")}; // Cambia el color y tamaño del borde
-  border-radius: 5px; // Opcional, para bordes redondeados
+  border: ${({ isSelected }) => (isSelected ? "2px solid black" : "none")}; 
+  border-radius: 5px; 
 
  
 `;
 
 const Menu = () => {
-  const location = useLocation(); // Obtiene la ubicación actual
-  const currentPath = location.pathname; // Obtiene la ruta actual
+  const location = useLocation();
+  const currentPath = location.pathname; 
 
   return (
     <div>
@@ -35,15 +35,15 @@ const Menu = () => {
         <li>
           <Enlace 
             to="/promociones" 
-            isSelected={currentPath === "/promociones"} // Verifica si la ruta actual es "/promociones"
+            isSelected={currentPath === "/promociones"} 
           >
             Promociones
           </Enlace>
         </li>
-        <li style={{ display: 'flex', flexDirection: 'row' }}> {/* Añade estilo en línea para que sea horizontal */}
+        <li style={{ display: 'flex', flexDirection: 'row' }}> 
           <Enlace 
             to="/nuevas-prendas" 
-            isSelected={currentPath === "/nuevas-prendas"} // Verifica si la ruta actual es "/nuevas-prendas"
+            isSelected={currentPath === "/nuevas-prendas"} 
           >
             Nuevas Prendas
           </Enlace>
@@ -51,7 +51,7 @@ const Menu = () => {
         <li>
           <Enlace 
             to="/marcas" 
-            isSelected={currentPath === "/marcas"} // Verifica si la ruta actual es "/marcas"
+            isSelected={currentPath === "/marcas"}
           >
             Marcas
           </Enlace>

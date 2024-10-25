@@ -1,8 +1,11 @@
 import Header from "../componentes/Header";
 
-const Marcas = () => {
+
+const MarcasProductos = () => {
     return (
+        <>
         <Header/>
+        </>
     );
 }
-export default Marcas;
+export default MarcasProductos;

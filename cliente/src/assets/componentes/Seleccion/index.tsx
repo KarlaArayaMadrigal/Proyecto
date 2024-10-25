@@ -6,7 +6,7 @@ const ListaOpciones = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10; /* Aseguramos que el select esté sobre otros elementos */
+  z-index: 10; 
 `;
 
 const Seleccion = styled.select`
@@ -18,13 +18,13 @@ const Seleccion = styled.select`
   font-size: 16px;
   cursor: pointer;
   border-radius: 4px; 
-  z-index: 11; /* Mantener el select visible sobre otros elementos */
+  z-index: 11; 
 `;
 
 const SeleccionOpciones = () => {
   const [selectedOption, setSelectedOption] = useState<string>("");
 
-  // Función para manejar el cambio de selección
+  
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     console.log("Evento recibido:", event);
 
