@@ -2,23 +2,23 @@ import styled from "styled-components";
 
 const Footer = styled.footer`
   background-color: black;
-  height: 70px; /* Altura del footer */
+  height: 70px;
   text-align: center;
   width: 100%;
   color: white;
   font-size: 14px;
-  display: flex; /* Usar flexbox para alinear los elementos */
-  justify-content: center; /* Centrar elementos horizontalmente */
-  align-items: center; /* Centrar elementos verticalmente */
-  gap: 20px; /* Espacio entre las imágenes */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
 `;
 
 const FooterImage = styled.img`
-display: block;
-  height: 70px; /* Altura fija para todas las imágenes */
-  width: 70px; /* Ancho fijo para todas las imágenes */
-  object-fit: contain; /* Mantiene la proporción de la imagen sin distorsionarla */
-  padding: 40px;
+  display: block !important;
+  height: 70px !important;
+  width: 70px !important;
+  object-fit: contain !important;
+  gap: 30px;
 `;
 
 const MarcaProducto = () => {
