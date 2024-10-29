@@ -1,5 +1,6 @@
+import Carrusel from "../componentes/Carrusel";
 import Header from "../componentes/Header";
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -9,13 +10,13 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-
 const Promocion = () => {
-    return (
-        <>
-        <GlobalStyle />
-        <Header/>
-        </>
-    );
-}
+  return (
+    <>
+      <GlobalStyle />
+      <Header />
+      <Carrusel />
+    </>
+  );
+};
 export default Promocion;

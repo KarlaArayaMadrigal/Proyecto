@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const Prueba = styled.div`
+const Muestra = styled.div`
   background-color: #f0eeed;
   color: black;
   padding: 20px;
@@ -68,48 +68,48 @@ const Cards = () => {
   return (
     <Container>
       <CardWrapper>
-        <Prueba>
+        <Muestra>
           <ImagenProducto
             src="/src/assets/img/Productos/camisa1.png"
             alt="Producto 1"
           />
-        </Prueba>
+        </Muestra>
         <Titulo>Camisa con detalle</Titulo>
         <Calificacion src="/src/assets/img/calificacion.png" alt="calificación" />
         <Precio> $120</Precio>
       </CardWrapper>
 
       <CardWrapper>
-        <Prueba>
+        <Muestra>
           <ImagenProducto
             src="/src/assets/img/Productos/pantalon1.png"
             alt="Producto 2"
           />
-        </Prueba>
+        </Muestra>
         <Titulo>Pantalón de mezclilla</Titulo>
         <Calificacion src="/src/assets/img/calificacion.png" alt="calificación" />
         <Precio> $240</Precio>
       </CardWrapper>
 
       <CardWrapper>
-        <Prueba>
+        <Muestra>
           <ImagenProducto
             src="/src/assets/img/Productos/camisa2.png"
             alt="Producto 3"
           />
-        </Prueba>
+        </Muestra>
         <Titulo>Camisa de cuadros</Titulo>
         <Calificacion src="/src/assets/img/calificacion.png" alt="calificación" />
         <Precio> $180</Precio>
       </CardWrapper>
 
       <CardWrapper>
-        <Prueba>
+        <Muestra>
           <ImagenProducto
             src="/src/assets/img/Productos/camisa3.png"
             alt="Producto 4"
           />
-        </Prueba>
+        </Muestra>
         <Titulo>Camisa de rayas</Titulo>
         <Calificacion src="/src/assets/img/calificacion.png" alt="calificación" />
         <Precio> $130</Precio>

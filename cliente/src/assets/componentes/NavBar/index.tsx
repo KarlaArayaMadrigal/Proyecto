@@ -10,7 +10,7 @@ const Contenido = styled.div`
 const InputContainer = styled.div`
   position: relative;
   width: 380px;
-  margin-left: 60px;
+  margin-left: 190px;
 `;
 
 const Input = styled.input`
