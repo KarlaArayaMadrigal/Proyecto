@@ -120,7 +120,7 @@ const Banner = () => {
   const navigate = useNavigate(); // Inicializar useNavigate
 
   const handleComprarAhora = () => {
-    navigate("/carrito"); // Redirigir a /carrito
+    navigate("/promociones"); // Redirigir a /carrito
   };
 
   return (
