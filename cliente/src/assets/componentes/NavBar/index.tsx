@@ -38,7 +38,7 @@ const IconContainer = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  margin-left: 70px;
+  margin-left: 40px;
 `;
 
 const Icon = styled.svg`

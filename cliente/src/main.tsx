@@ -7,6 +7,7 @@ import Marcas from './assets/pages/Marcas.tsx';
 import Carrito from './assets/pages/Carrito.tsx';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
+import Producto from './assets/pages/Productos.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/promociones" element={<Promocion />} />
         <Route path="/marcas" element={<Marcas />} />
         <Route path="/carrito" element={<Carrito />} />
+        <Route path="/productos" element={<Producto />} />
       </Routes>
     </Router>
   </StrictMode>

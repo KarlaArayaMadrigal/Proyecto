@@ -28,6 +28,11 @@ const Menu = () => {
   return (
     <div>
       <Lista>
+      <li>
+          <Enlace to="/productos" isSelected={currentPath === "/productos"}>
+            Productos
+          </Enlace>
+        </li>
         <li>
           <Enlace to="/promociones" isSelected={currentPath === "/promociones"}>
             Promociones

@@ -26,7 +26,7 @@ const ModalContent = styled.div`
   width: 450px;
   max-width: 90%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;  /* Esto es necesario para que CloseIcon se posicione relativo a ModalContent */
+  position: relative; 
 `;
 
 const ModalHeader = styled.h1`
@@ -77,15 +77,14 @@ const CloseIcon = styled.img`
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 40px;  /* Aumenta el tamaño */
-  height: 40px; /* Aumenta el tamaño */
+  width: 30px;  
+  height: 30px; 
   padding: 5px;
-  border-radius: 50%; /* Para que sea redondeado */
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
+    background-color: #e21515;
   }
 `;
 
