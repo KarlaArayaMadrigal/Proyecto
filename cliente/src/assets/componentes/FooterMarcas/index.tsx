@@ -32,6 +32,7 @@ const MarcaProducto = () => {
       <FooterImage src="/src/assets/img/gucci.png" alt="Gucci" />
     </Footer>
   );
+  
 };
 
 export default MarcaProducto;

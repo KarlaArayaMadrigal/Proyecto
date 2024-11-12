@@ -26,7 +26,7 @@ const ModalContent = styled.div`
   width: 450px;
   max-width: 90%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative; 
+  position: relative;
 `;
 
 const ModalHeader = styled.h1`
@@ -77,8 +77,8 @@ const CloseIcon = styled.img`
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 30px;  
-  height: 30px; 
+  width: 30px;
+  height: 30px;
   padding: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -102,7 +102,7 @@ const Perfil: React.FC<PerfilProps> = ({ isOpen, onClose }) => {
           <Button type="submit">Guardar</Button>
         </Form>
         <CloseIcon
-          src="/src/assets/img/cerrar.png"
+          src="/assets/img/cerrar.png" // Verifica la ruta de la imagen aquí
           alt="Cerrar"
           onClick={onClose}
         />

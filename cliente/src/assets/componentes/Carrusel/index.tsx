@@ -1,144 +1,86 @@
-import React, { useState } from "react";
-import Slider from "react-slick";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
-import ModalProducto from "../Modal";
 
-interface Producto {
-    id: number;
-    nombre: string;
-    precio: string;
-    img: string;
+// Tipos para las marcas
+interface Marca {
+  id: number;
+  nombre: string;
+  logo: string; // Nombre o URL de la imagen
 }
 
-const Container = styled.div`
-  background-color: #fefefe;
-  margin-top: 50px;
-`;
-
-const Muestra = styled.div`
-  background-color: #f0eeed;
-  color: black;
-  padding: 20px;
-  width: 250px;
-  height: 250px;
-  margin: 10px;
-  text-align: center;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+// Estilos del carrusel
+const CarruselContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-
-  &:hover {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-  }
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f8f8f8;
 `;
 
-const CardWrapper = styled.div`
+const MarcaCard = styled.div`
+  min-width: 200px;
+  height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 2px;
-  padding: 15px;
+  justify-content: center;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
 `;
 
-const Titulo = styled.h1`
-  padding: 5px;
-  width: 250px;
-  font-size: 20px;
-  font-family: "Afacad Flux", sans-serif;
-  color: black;
-  text-align: start;
-  margin-top: -5px;
-`;
-
-const Calificacion = styled.img`
-  align-items: start;
-  display: flex;
-  margin-right: 150px;
-`;
-
-const ImagenProducto = styled.img`
-  max-width: 100%;
-  max-height: 100%;
+const MarcaLogo = styled.img`
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-  cursor: pointer;
+  margin-bottom: 10px;
 `;
 
-const Precio = styled.h2`
-  font-size: 20px;
-  text-align: start;
-  width: 250px;
-  font-family: "Afacad Flux", sans-serif;
+const MarcaNombre = styled.h3`
+  font-size: 18px;
+  color: #333;
 `;
 
+const ErrorMensaje = styled.p`
+  color: red;
+  text-align: center;
+  font-size: 18px;
+`;
+
+// Componente Carrusel
 const Carrusel: React.FC = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null);
+  const [marcas, setMarcas] = useState<Marca[]>([]); // Estado tipado para las marcas
+  const [error, setError] = useState<string | null>(null); // Estado para manejar errores
 
-  const abrirModal = (producto: Producto) => {
-    setProductoSeleccionado(producto);
-    setModalOpen(true);
-  };
+  useEffect(() => {
+    const fetchMarcas = async () => {
+      try {
+        const response = await axios.get<Marca[]>("http://localhost:5000/api/marcas-con-ventas");
+        console.log("Top 5 marcas vendidas:", response.data);
+        setMarcas(response.data);
+        setError(null); // Limpiar cualquier error previo
+      } catch (error: any) {
+        console.error("Error al obtener marcas:", error.message);
+        setError("No se pudieron cargar las marcas. Intenta nuevamente más tarde.");
+      }
+    };
 
-  const cerrarModal = () => {
-    setModalOpen(false);
-    setProductoSeleccionado(null);
-  };
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  };
-
-  const productos: Producto[] = [
-    { id: 1, nombre: "Camisa con detalle", precio: "$120", img: "/src/assets/img/Productos/camisa1.png" },
-    { id: 2, nombre: "Pantalón de mezclilla", precio: "$240", img: "/src/assets/img/Productos/pantalon1.png" },
-    { id: 3, nombre: "Camisa de cuadros", precio: "$180", img: "/src/assets/img/Productos/camisa2.png" },
-    { id: 4, nombre: "Camisa de rayas", precio: "$130", img: "/src/assets/img/Productos/camisa3.png" },
-  ];
+    fetchMarcas();
+  }, []);
 
   return (
-    <Container>
-      <Slider {...settings}>
-        {productos.map((producto) => (
-          <CardWrapper key={producto.id}>
-            <Muestra onClick={() => abrirModal(producto)}>
-              <ImagenProducto src={producto.img} alt={producto.nombre} />
-            </Muestra>
-            <Titulo>{producto.nombre}</Titulo>
-            <Calificacion src="/src/assets/img/calificacion.png" alt="calificación" />
-            <Precio>{producto.precio}</Precio>
-          </CardWrapper>
-        ))}
-      </Slider>
-
-      {modalOpen && (
-        <ModalProducto
-          producto={productoSeleccionado}
-          onClose={cerrarModal}
-        />
-      )}
-    </Container>
+    <CarruselContainer>
+      {error && <ErrorMensaje>{error}</ErrorMensaje>} {/* Mostrar mensaje de error si existe */}
+      {marcas.map((marca) => (
+        <MarcaCard key={marca.id}>
+          <MarcaLogo src={`http://localhost:5000/images/${marca.logo}`} alt={marca.nombre} />
+          <MarcaNombre>{marca.nombre}</MarcaNombre>
+        </MarcaCard>
+      ))}
+    </CarruselContainer>
   );
 };
 

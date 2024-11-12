@@ -2,6 +2,10 @@ import { useState } from "react";
 import Banner from "./assets/componentes/Banner";
 import Header from "./assets/componentes/Header";
 import NuevosProductos from "./assets/componentes/NuevosProductos";
+
+
+ // o .tsx si es TypeScript
+
 import Perfil from "./assets/pages/Perfil"; // Asegúrate de que la ruta sea correcta
 import { createGlobalStyle } from "styled-components";
 

@@ -1,5 +1,5 @@
-import MarcaProducto from "../componentes/FooterMarcas";
-import Header from "../componentes/Header";
+import MarcaProducto from "../componentes/FooterMarcas";  // Asegúrate de que la ruta sea correcta
+import Header from "../componentes/Header";               // Asegúrate de que la ruta sea correcta
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -9,15 +9,14 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-
 const Marcas = () => {
     return (
         <>
-        <GlobalStyle/>
-        <Header/>
-        <MarcaProducto/>
-        
+            <GlobalStyle />
+            <Header />
+            <MarcaProducto />  {/* Aquí es donde se muestra el pie de página con las marcas */}
         </>
     );
 }
+
 export default Marcas;
