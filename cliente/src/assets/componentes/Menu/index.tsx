@@ -1,6 +1,24 @@
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
 
+// Define el tipo de las props que usará el componente Enlace
+interface EnlaceProps {
+  isSelected: boolean;
+}
+
+// Componente Enlace estilizado que extiende Link
+const Enlace = styled(({ isSelected, ...props }: EnlaceProps & React.ComponentProps<typeof Link>) => (
+  <Link {...props} />
+))`
+  color: black;
+  font-family: "Afacad Flux", sans-serif;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 5px 10px;
+  border: ${({ isSelected }) => (isSelected ? "2px solid black" : "none")};
+  border-radius: 5px;
+`;
+
 const Lista = styled.ul`
   list-style-type: none;
   display: flex;
@@ -10,17 +28,6 @@ const Lista = styled.ul`
   margin-left: 50px;
 `;
 
-const Enlace = styled(Link)<{ isSelected: boolean }>`
-  color: black;
-  font-family: "Afacad Flux", sans-serif;
-  text-decoration: none;
-  font-size: 16px;
-  padding: 5px 10px;
-
-  border: ${({ isSelected }) => (isSelected ? "2px solid black" : "none")};
-  border-radius: 5px;
-`;
-
 const Menu = () => {
   const location = useLocation();
   const currentPath = location.pathname;
@@ -28,12 +35,11 @@ const Menu = () => {
   return (
     <div>
       <Lista>
-      <li>
+        <li>
           <Enlace to="/productos" isSelected={currentPath === "/productos"}>
             Productos
           </Enlace>
         </li>
-
       </Lista>
     </div>
   );

@@ -58,7 +58,7 @@ const ProductoNombre = styled.h2`
 const Precio = styled.p`
   font-size: 18px;
   font-weight: bold;
-  color: #e67e22;
+  color: #2d4d63;
 `;
 
 const Cantidad = styled.p`
@@ -68,7 +68,7 @@ const Cantidad = styled.p`
 
 const BotonComprar = styled.button`
   padding: 10px 20px;
-  background-color: #e67e22;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 5px;
@@ -78,7 +78,7 @@ const BotonComprar = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #d35400;
+    background-color: #2d4d63;
   }
 `;
 
@@ -100,9 +100,12 @@ const SelectButtonContainer = styled.div`
 `;
 
 const SelectButton = styled(BotonComprar)`
-  background-color: #3498db;
+  background-color: #000000;
+  display: flex;
+  margin-left: 120px;
+  margin-top: -350px;
   &:hover {
-    background-color: #2980b9;
+    background-color: #2d4d63;
   }
 `;
 
@@ -172,8 +175,7 @@ const Carrito: React.FC = () => {
         ) : (
           ventas.map((venta) => (
             <Cards key={venta.id_venta}>
-              <ProductoNombre>Venta ID: {venta.id_venta}</ProductoNombre>
-              <Cantidad>Cantidad: {venta.cantidad}</Cantidad>
+              <ProductoNombre>{venta.tipo_prenda}</ProductoNombre>
               <Precio>Precio: ${venta.precio}</Precio>
               <CheckboxContainer>
                 <input

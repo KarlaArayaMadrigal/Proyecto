@@ -102,7 +102,7 @@ const Perfil: React.FC<PerfilProps> = ({ isOpen, onClose }) => {
           <Button type="submit">Guardar</Button>
         </Form>
         <CloseIcon
-          src="/assets/img/cerrar.png" // Verifica la ruta de la imagen aquí
+          src="/src/assets/img/cerrar.png" // Verifica la ruta de la imagen aquí
           alt="Cerrar"
           onClick={onClose}
         />

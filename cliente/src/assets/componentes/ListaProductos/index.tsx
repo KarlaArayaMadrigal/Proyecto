@@ -63,7 +63,7 @@ const Cantidad = styled.p`
 
 const BotonComprar = styled.button`
   padding: 10px 20px;
-  background-color: #e67e22;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 5px;
@@ -73,7 +73,7 @@ const BotonComprar = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #d35400;
+    background-color: #2d4d63;
   }
 `;
 
