@@ -1,144 +1,143 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import styled from "styled-components";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-// Estilos del contenedor y tarjetas
 const Container = styled.section`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  background-color: #f4f4f4; /* Agregar espacio superior */
-  padding-top: 40px; /* Añadir espacio para que el título no esté pegado al borde superior */
+  padding: 30px;
+  background-color: #f4f4f9;
 `;
 
 const Titulo = styled.h1`
   text-align: center;
-  font-size: 28px;
+  font-size: 36px;
   margin-bottom: 40px;
   font-family: "Afacad Flux", sans-serif;
   color: #333;
-  background-color: #000000;
-  width: min-content;
-  margin-top: 20px; /* Ajusta si necesitas más espacio en la parte superior */
 `;
 
-const Card = styled.div`
+const Cards = styled.div`
   width: 300px;
-  height: 420px;
+  height: 450px;
   margin: 15px;
-  border-radius: 8px;
-  border: 1px solid #e1e1e1;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  background-color: #fff;
-  padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 15px;
+  transition: transform 0.2s ease-in-out;
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 `;
 
-const ImagenProducto = styled.img`
+const Image = styled.img`
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  height: auto;
   border-radius: 8px;
 `;
 
-const NombreProducto = styled.h3`
+const ProductoNombre = styled.h2`
   font-size: 20px;
-  font-weight: 600;
   color: #333;
-  margin: 10px 0;
-`;
-
-const DetallesProducto = styled.p`
-  font-size: 16px;
-  color: #555;
-  margin: 5px 0;
+  margin-top: 15px;
 `;
 
 const Precio = styled.p`
   font-size: 18px;
-  color: #2ecc71;
-  font-weight: 600;
+  font-weight: bold;
+  color: #e67e22;
 `;
 
-const ErrorMensaje = styled.p`
-  color: red;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 20px;
+const Cantidad = styled.p`
+  font-size: 16px;
+  color: #555;
 `;
 
 const BotonComprar = styled.button`
-  background-color: #050505;
+  padding: 10px 20px;
+  background-color: #e67e22;
   color: white;
   border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
   border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #1e1e1e;
+    background-color: #d35400;
   }
 `;
 
-const ListaProductos = () => {
-  const [productos, setProductos] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
+interface Producto {
+  id_inventario: number;
+  id_marca: number | null;
+  tipo_prenda: string;
+  cantidad_disponible: number;
+  precio: number;
+  imagen_url: string;
+}
 
-  const handleCompra = () => {
-    alert('Producto comprado!');
-  };
+const ListaProductos = () => {
+  const [inventario, setInventario] = useState<Producto[]>([]);
 
   useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/inventario");
-        setProductos(response.data);
-      } catch (error) {
-        console.error("Error al obtener productos:", error);
-        setError("No se pudieron cargar los productos. Intenta nuevamente más tarde.");
-      }
-    };
-
-    fetchProductos();
+    fetch('http://localhost/Proyecto-Desarrollo/backend/api.php')
+      .then(response => response.json())
+      .then(data => setInventario(data))
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
 
+  const handleComprar = async (producto: Producto) => {
+    const ventaData = {
+      id_inventario: producto.id_inventario,
+      tipo_prenda: producto.tipo_prenda,
+      precio: producto.precio,
+      cantidad: 1, // Ajusta esto según la cantidad que desees vender
+    };
+
+    try {
+      const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/api.php?action=venta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(ventaData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al realizar la compra');
+      }
+
+      const result = await response.json();
+      alert(`Agregado al carrito`);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un problema al realizar la compra.');
+    }
+  };
+
   return (
-    <div>
-      {/* Mostrar mensaje de error si existe */}
-      {error && <ErrorMensaje>{error}</ErrorMensaje>}
-
-      {/* Título en la parte superior */}
+    <Container>
       <Titulo>Todos los productos</Titulo>
-
-      {/* Contenedor de las tarjetas */}
-      <Container>
-        {productos.map((producto) => (
-          <Card key={producto.id_inventario}>
-            <ImagenProducto
-              src={`http://localhost:5000/images/${producto.imagen}`}
-              alt={producto.tipo_prenda}
-            />
-            <NombreProducto>{producto.tipo_prenda}</NombreProducto>
-            <DetallesProducto>{producto.cantidad_disponible} disponibles</DetallesProducto>
-            <Precio>Precio: ${producto.precio}</Precio>
-            <BotonComprar onClick={handleCompra}>Comprar</BotonComprar>
-          </Card>
-        ))}
-      </Container>
-    </div>
+      {inventario.map(item => (
+        <Cards key={item.id_inventario}>
+          <Image src={item.imagen_url} alt={item.tipo_prenda} />
+          <ProductoNombre>{item.tipo_prenda}</ProductoNombre>
+          <Cantidad>Cantidad disponible: {item.cantidad_disponible}</Cantidad>
+          <Precio>Precio: ${item.precio}</Precio>
+          <BotonComprar onClick={() => handleComprar(item)}>Comprar</BotonComprar>
+        </Cards>
+      ))}
+    </Container>
   );
 };
 

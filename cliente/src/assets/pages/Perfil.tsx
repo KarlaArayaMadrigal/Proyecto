@@ -111,4 +111,5 @@ const Perfil: React.FC<PerfilProps> = ({ isOpen, onClose }) => {
   );
 };
 
+
 export default Perfil;
