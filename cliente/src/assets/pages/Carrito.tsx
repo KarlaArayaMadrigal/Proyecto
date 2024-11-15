@@ -126,7 +126,7 @@ const Carrito: React.FC = () => {
   useEffect(() => {
     const fetchVentas = async () => {
       try {
-        const response = await fetch("http://localhost/Proyecto-Desarrollo/backend/api.php?action=ventas"); // Cambia la URL según tu API
+        const response = await fetch("http://localhost/Proyecto-Desarrollo/backend/api.php?action=createVenta"); // Cambia la URL según tu API
         if (!response.ok) {
           throw new Error("Error al obtener las ventas");
         }

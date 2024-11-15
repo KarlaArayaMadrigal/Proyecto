@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, FormEvent } from "react";
 import styled from "styled-components";
 
 interface PerfilProps {
@@ -89,27 +89,86 @@ const CloseIcon = styled.img`
 `;
 
 const Perfil: React.FC<PerfilProps> = ({ isOpen, onClose }) => {
+  const [nombre, setNombre] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null); // Manejo de errores
+  const [success, setSuccess] = useState<string | null>(null); // Mensaje de éxito
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null); // Resetea el error
+    setSuccess(null); // Resetea el mensaje de éxito
+
+    // Verificar los datos que se están enviando
+    console.log({ nombre, correo, password });
+
+    try {
+        const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/api.php?action=createUsuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nombre, correo, password }), // Enviar datos correctamente
+        });
+
+        console.log('Response:', response); // Para depuración
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al registrar el usuario');
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setSuccess('Usuario registrado con éxito'); // Mensaje de éxito
+        onClose(); // Cierra el modal si el registro es exitoso
+    } catch (error) {
+        setError((error as Error).message); // Guarda el mensaje de error
+    }
+};
+
+
   if (!isOpen) return null;
 
   return (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>Registrate</ModalHeader>
-        <Form>
-          <Input type="text" placeholder="Nombre" required />
-          <Input type="email" placeholder="Correo electrónico" required />
-          <Input type="password" placeholder="Contraseña" required />
+        <ModalHeader>Regístrate</ModalHeader>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            type="text"
+            placeholder="Nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+          <Input
+            type="email"
+            placeholder="Correo electrónico"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <Button type="submit">Guardar</Button>
         </Form>
         <CloseIcon
-          src="/src/assets/img/cerrar.png" // Verifica la ruta de la imagen aquí
+          src="/src/assets/img/cerrar.png"
           alt="Cerrar"
           onClick={onClose}
-        />
+          />
+      {error && <div style={{ color: 'red' }}>{error}</div>} {/* Muestra el mensaje de error */}
+      {success && <div style={{ color: 'green' }}>{success}</div>} {/* Muestra el mensaje de éxito */}
       </ModalContent>
     </ModalOverlay>
   );
 };
-
 
 export default Perfil;
