@@ -1,0 +1,10 @@
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "http://localhost:5173"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+RewriteEngine On
+RewriteBase /
+
+# Asegúrate de que esta regla se aplique a tu archivo PHP
+RewriteRule ^api/usuario$ api/usuario.php [L]
