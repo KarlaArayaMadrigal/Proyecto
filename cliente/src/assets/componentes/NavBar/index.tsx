@@ -51,10 +51,10 @@ const Icon = styled.svg`
 
 // Suponiendo que tienes una lista de productos
 const productos = [
-  { id: 1, nombre: "Producto A" },
-  { id: 2, nombre: "Producto B" },
-  { id: 3, nombre: "Producto C" },
-  { id: 4, nombre: "Producto D" },
+  { id: 1, tipo_prenda: "Camisa" },
+  { id: 2, tipo_prenda: "Pantalón" },
+  { id: 3, tipo_prenda: "Chaqueta" },
+  { id: 4, tipo_prenda: "Zapatos" },
 ];
 
 const Navegacion = () => {
@@ -74,9 +74,9 @@ const Navegacion = () => {
     setSearchText(event.target.value);
   };
 
-  // Filtrar productos basados en el texto de búsqueda
+  // Filtrar productos basados en el tipo_prenda
   const filteredProducts = productos.filter(producto =>
-    producto.nombre.toLowerCase().includes(searchText.toLowerCase())
+    producto.tipo_prenda.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
@@ -100,7 +100,7 @@ const Navegacion = () => {
           <Icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M7 18c-1.104 0-1.99.896-1.99 2S5.896 22 7 22s2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-1.99.896-1.99 2S15.896 22 17 22s2-.896 2-2-.896-2-2-2zM7.938 16l1.362-5.446 8.445-.002-1.69 6.746H7.938zM6.82 9l-.57 2.282L4 7h16l-3.444 9.746H8.362l-.58 2.002H19V19H5V17h1.82z" />
           </Icon>
-                  </Link>
+        </Link>
         <Icon onClick={openPerfilModal} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M12 2a7 7 0 100 14 7 7 0 000-14zm0 2a5 5 0 110 10A5 5 0 0112 4zm0 12c-3.315 0-8 1.674-8 5v1h16v-1c0-3.326-4.685-5-8-5z" />
         </Icon>
@@ -115,7 +115,7 @@ const Navegacion = () => {
           {filteredProducts.length > 0 ? (
             <ul>
               {filteredProducts.map(producto => (
-                <li key={producto.id}>{producto.nombre}</li>
+                <li key={producto.id}>{producto.tipo_prenda}</li>
               ))}
             </ul>
           ) : (

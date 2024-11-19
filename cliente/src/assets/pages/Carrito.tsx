@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import Header from "../componentes/Header";
-import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -11,64 +10,159 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// Estilos globales y contenedores
 const Container = styled.section`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  padding: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 5px; 
+  padding: 3px;
   background-color: #f4f4f9;
+  justify-items: center; 
+  
+  /* Para pantallas pequeñas, ajustamos el número de columnas */
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr); 
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; 
+  }
+`;
+const NoArticulos = styled.p`
+  font-family: "Afacad Flux", sans-serif;
+  font-size: 18px;
+  text-align: center;
+  display: flex;
+  color: #555;
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 280px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 80%;
+  margin: 0 auto;
+  margin-right: -440px;
 `;
 
 const Titulo = styled.h1`
   text-align: center;
   font-size: 36px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-family: "Afacad Flux", sans-serif;
   color: #333;
 `;
 
 const Cards = styled.div`
-  width: 300px;
-  height: 450px;
+  width: 280px;
+  height: max-content;
   margin: 15px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  transition: transform 0.2s ease-in-out;
+  padding: 20px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    width: 230px;
   }
 `;
 
+const ProductoImagen = styled.img`
+  width: 100%;
+  height: 200px; 
+  object-fit: cover;
+  border-radius: 8px;
+  object-fit: contain;
+`;
+
 const ProductoNombre = styled.h2`
-  font-size: 20px;
+  font-size: 18px;
+  font-family: "Afacad Flux", sans-serif;
   color: #333;
-  margin-top: 15px;
+  margin: 10px 0;
+  font-weight: 600;
 `;
 
 const Precio = styled.p`
   font-size: 18px;
   font-weight: bold;
+  font-family: "Afacad Flux", sans-serif;
   color: #2d4d63;
 `;
 
-const Cantidad = styled.p`
-  font-size: 16px;
-  color: #555;
+const InputCantidadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: "Afacad Flux", sans-serif;
+  align-items: center;
+  margin-top: 10px;
 `;
 
-const BotonComprar = styled.button`
+const InputCantidad = styled.input`
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  font-family: "Afacad Flux", sans-serif;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 5px;
+
+  &:focus {
+    outline: 2px solid #2d4d63;
+  }
+`;
+
+const ActionContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  align-items: center; 
+`;
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-right: 10px; 
+`;
+
+const CheckboxLabel = styled.label`
+font-family: "Afacad Flux", sans-serif;
+  font-size: 16px;
+  color: #333;
+  margin-left: 5px;
+`;
+
+const BorrarIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+`;
+
+const SelectButtonContainer = styled.div`
+  text-align: center;
+  margin-top: -519px;
+  margin-left: 900px;
+`;
+
+const SelectButton = styled.button`
   padding: 10px 20px;
   background-color: #000000;
+  font-family: "Afacad Flux", sans-serif;
   color: white;
   border: none;
   border-radius: 5px;
@@ -82,117 +176,162 @@ const BotonComprar = styled.button`
   }
 `;
 
-const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-`;
-
-const CheckboxLabel = styled.label`
-  margin-left: 10px;
-  font-size: 16px;
-  color: #555;
-`;
-
-const SelectButtonContainer = styled.div`
-  text-align: center;
-  margin-top: 30px;
-`;
-
-const SelectButton = styled(BotonComprar)`
-  background-color: #000000;
-  display: flex;
-  margin-left: 120px;
-  margin-top: -350px;
-  &:hover {
-    background-color: #2d4d63;
-  }
-`;
-
-// Define la interfaz para las ventas
-interface Venta {
-  id_venta: number;
-  precio: string;
+interface Producto {
   id_inventario: number;
   tipo_prenda: string;
+  precio: number;
+  imagen_url: string;
+}
+
+interface ProductoSeleccionado {
+  id_inventario: number;
   cantidad: number;
 }
 
 const Carrito: React.FC = () => {
-  const [ventas, setVentas] = useState<Venta[]>([]); // Estado para almacenar las ventas
-  const [error, setError] = useState<string | null>(null); // Estado para manejar errores
-  const [selectedVentas, setSelectedVentas] = useState<number[]>([]); // Estado para los artículos seleccionados
+  const [carrito, setCarrito] = useState<Producto[]>([]);
+  const [seleccionados, setSeleccionados] = useState<ProductoSeleccionado[]>([]);
+  const [checkboxes, setCheckboxes] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
-    const fetchVentas = async () => {
-      try {
-        const response = await fetch("http://localhost/Proyecto-Desarrollo/backend/api.php?action=createVenta"); // Cambia la URL según tu API
-        if (!response.ok) {
-          throw new Error("Error al obtener las ventas");
-        }
-        const data: Venta[] = await response.json(); // Especifica que la respuesta es un array de Ventas
-        setVentas(data); // Almacena las ventas en el estado
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Error desconocido"); // Maneja el error
-      }
-    };
+    const storedCarrito = localStorage.getItem("carrito");
+    if (storedCarrito) {
+      const productos = JSON.parse(storedCarrito);
 
-    fetchVentas(); // Llama a la función para obtener las ventas
-  }, []); // El array vacío significa que solo se ejecutará una vez al montar el componente
+      // Eliminar productos duplicados
+      const productosUnicos = productos.filter(
+        (producto: Producto, index: number, self: Producto[]) =>
+          self.findIndex((p) => p.id_inventario === producto.id_inventario) ===
+          index
+      );
 
-  // Función para manejar el cambio del checkbox
-  const handleCheckboxChange = (id_venta: number) => {
-    setSelectedVentas((prevSelected) => {
-      if (prevSelected.includes(id_venta)) {
-        // Si ya está seleccionado, lo eliminamos
-        return prevSelected.filter((ventaId) => ventaId !== id_venta);
-      } else {
-        // Si no está seleccionado, lo agregamos
-        return [...prevSelected, id_venta];
+      setCarrito(productosUnicos);
+    }
+  }, []);
+
+  const handleCantidadChange = (id: number, cantidad: number) => {
+    setSeleccionados((prev) => {
+      const existe = prev.find((item) => item.id_inventario === id);
+      if (existe) {
+        return prev.map((item) =>
+          item.id_inventario === id ? { ...item, cantidad } : item
+        );
       }
+      return [...prev, { id_inventario: id, cantidad }];
     });
   };
 
-  // Función para proceder con la compra de los artículos seleccionados
-  const handleComprarSeleccionados = () => {
-    if (selectedVentas.length === 0) {
-      alert("No has seleccionado ningún artículo.");
-    } else {
-      alert(`Productos con ID ${selectedVentas.join(", ")} añadidos al carrito.`);
-      // Aquí podrías hacer una petición para realizar la compra de los artículos seleccionados.
+  const handleCheckboxChange = (id: number) => {
+    setCheckboxes((prev) => {
+      const updatedCheckboxes = { ...prev, [id]: !prev[id] };
+      if (!updatedCheckboxes[id]) {
+        setSeleccionados((prevSeleccionados) =>
+          prevSeleccionados.filter((item) => item.id_inventario !== id)
+        );
+      }
+      return updatedCheckboxes;
+    });
+  };
+
+  const handleEliminarProducto = (id: number) => {
+    // Eliminar el producto del carrito
+    const newCarrito = carrito.filter((producto) => producto.id_inventario !== id);
+    setCarrito(newCarrito);
+
+    // Eliminar del localStorage
+    localStorage.setItem("carrito", JSON.stringify(newCarrito));
+
+    // Eliminar también de los productos seleccionados y checkboxes
+    setSeleccionados((prevSeleccionados) =>
+      prevSeleccionados.filter((item) => item.id_inventario !== id)
+    );
+    setCheckboxes((prevCheckboxes) => {
+      const updatedCheckboxes = { ...prevCheckboxes };
+      delete updatedCheckboxes[id];
+      return updatedCheckboxes;
+    });
+  };
+
+  const handleConfirmarCompra = () => {
+    const productosSeleccionados = seleccionados
+      .filter((item) => item.cantidad > 0)
+      .map((seleccionado) => {
+        const producto = carrito.find(
+          (p) => p.id_inventario === seleccionado.id_inventario
+        );
+        return { ...producto, cantidad: seleccionado.cantidad };
+      });
+
+    if (productosSeleccionados.length === 0) {
+      alert("Selecciona al menos un producto y cantidad para confirmar la compra.");
+      return;
     }
+
+    alert(
+      `Compra confirmada: ${productosSeleccionados.length} .`
+    );
+    console.log("Productos seleccionados:", productosSeleccionados);
   };
 
   return (
     <>
-      <GlobalStyle /> {/* Estilos globales se encuentran dentro del return */}
-      <Header /> {/* Header se encuentra dentro del return */}
+      <GlobalStyle />
+      <Header />
+      <Titulo>Carrito de compras</Titulo>
       <Container>
-        <Titulo>Compras realizadas</Titulo>
-        {error && <p>Error: {error}</p>} {/* Muestra el error si existe */}
-        {ventas.length === 0 ? (
-          <p>No se han realizado ventas.</p>
+        {carrito.length === 0 ? (
+          <NoArticulos>No hay artículos en el carrito.</NoArticulos>
         ) : (
-          ventas.map((venta) => (
-            <Cards key={venta.id_venta}>
-              <ProductoNombre>{venta.tipo_prenda}</ProductoNombre>
-              <Precio>Precio: ${venta.precio}</Precio>
-              <CheckboxContainer>
-                <input
-                  type="checkbox"
-                  id={`venta-${venta.id_venta}`}
-                  onChange={() => handleCheckboxChange(venta.id_venta)}
-                  checked={selectedVentas.includes(venta.id_venta)}
+          carrito.map((producto) => (
+            <Cards key={producto.id_inventario}>
+              <ProductoImagen
+                src={producto.imagen_url}
+                alt={producto.tipo_prenda}
+              />
+              <ProductoNombre>{producto.tipo_prenda}</ProductoNombre>
+              <Precio>Precio: ${producto.precio}</Precio>
+              <InputCantidadContainer>
+                <label htmlFor={`cantidad-${producto.id_inventario}`}>
+                  Cantidad:
+                </label>
+                <InputCantidad
+                  id={`cantidad-${producto.id_inventario}`}
+                  type="number"
+                  min="1"
+                  defaultValue="1"
+                  onChange={(e) =>
+                    handleCantidadChange(
+                      producto.id_inventario,
+                      parseInt(e.target.value, 10) || 1
+                    )
+                  }
                 />
-                <CheckboxLabel htmlFor={`venta-${venta.id_venta}`}>Seleccionar</CheckboxLabel>
-              </CheckboxContainer>
+              </InputCantidadContainer>
+              <ActionContainer>
+                <CheckboxContainer>
+                  <input
+                    type="checkbox"
+                    id={`checkbox-${producto.id_inventario}`}
+                    checked={checkboxes[producto.id_inventario] || false}
+                    onChange={() => handleCheckboxChange(producto.id_inventario)}
+                  />
+                  <CheckboxLabel htmlFor={`checkbox-${producto.id_inventario}`}>
+                    Seleccionar
+                  </CheckboxLabel>
+                </CheckboxContainer>
+                <BorrarIcon
+                  src="/src/assets/img/borrar.png"
+                  alt="Borrar"
+                  onClick={() => handleEliminarProducto(producto.id_inventario)}
+                />
+              </ActionContainer>
             </Cards>
           ))
         )}
       </Container>
       <SelectButtonContainer>
-        <SelectButton onClick={handleComprarSeleccionados}>
-          Comprar seleccionados
+        <SelectButton onClick={handleConfirmarCompra}>
+          Confirmar compra
         </SelectButton>
       </SelectButtonContainer>
     </>
@@ -200,4 +339,3 @@ const Carrito: React.FC = () => {
 };
 
 export default Carrito;
-
