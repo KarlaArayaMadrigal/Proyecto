@@ -31,6 +31,7 @@ const Container = styled.section`
     grid-template-columns: 1fr; 
   }
 `;
+
 const NoArticulos = styled.p`
   font-family: "Afacad Flux", sans-serif;
   font-size: 18px;
@@ -252,26 +253,43 @@ const Carrito: React.FC = () => {
     });
   };
 
-  const handleConfirmarCompra = () => {
+  const handleConfirmarCompra = async () => {
     const productosSeleccionados = seleccionados
-      .filter((item) => item.cantidad > 0)
+      .filter((item) => item.cantidad > 0)  // Filtramos los productos con cantidad mayor a 0
       .map((seleccionado) => {
         const producto = carrito.find(
           (p) => p.id_inventario === seleccionado.id_inventario
         );
-        return { ...producto, cantidad: seleccionado.cantidad };
+        return { ...producto, cantidad: seleccionado.cantidad };  // Añadimos la cantidad seleccionada
       });
-
+  
     if (productosSeleccionados.length === 0) {
       alert("Selecciona al menos un producto y cantidad para confirmar la compra.");
       return;
     }
-
-    alert(
-      `Compra confirmada: ${productosSeleccionados.length} .`
-    );
-    console.log("Productos seleccionados:", productosSeleccionados);
+  
+    try {
+      const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/src/models/Venta.php', {  
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productos: productosSeleccionados }), 
+      });
+  
+      if (response.ok) {
+        alert("Compra confirmada!");
+        console.log("Productos seleccionados enviados al backend:", productosSeleccionados);
+        
+      } else {
+        alert("Error al confirmar la compra. Intenta nuevamente.");
+      }
+    } catch (error) {
+      alert("Hubo un error al procesar tu compra.");
+      console.error(error);
+    }
   };
+  
 
   return (
     <>

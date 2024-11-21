@@ -92,42 +92,52 @@ const Perfil: React.FC<PerfilProps> = ({ isOpen, onClose }) => {
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null); // Manejo de errores
-  const [success, setSuccess] = useState<string | null>(null); // Mensaje de éxito
+  const [error, setError] = useState<string | null>(null); 
+  const [success, setSuccess] = useState<string | null>(null); 
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null); // Resetea el error
-    setSuccess(null); // Resetea el mensaje de éxito
-
+    setError(null); 
+    setSuccess(null); 
+  
     // Verificar los datos que se están enviando
     console.log({ nombre, correo, password });
-
+  
     try {
-        const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/api.php?action=createUsuario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nombre, correo, password }), // Enviar datos correctamente
-        });
-
-        console.log('Response:', response); // Para depuración
-
+      const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/src/models/Usuario.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nombre, correo, password }),
+    });
+    
+  
+        // Verificar si la respuesta es vacía antes de intentar analizarla
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Error al registrar el usuario');
+            throw new Error('Error al registrar el usuario');
         }
-
-        const data = await response.json();
-        console.log(data);
-        setSuccess('Usuario registrado con éxito'); // Mensaje de éxito
-        onClose(); // Cierra el modal si el registro es exitoso
+  
+        // Verificar si la respuesta tiene contenido
+        const textResponse = await response.text(); 
+        console.log('Response Text:', textResponse); 
+  
+        // Verificar si la respuesta no está vacía
+        if (textResponse) {
+            const data = JSON.parse(textResponse);
+            console.log(data);
+            setSuccess('Usuario registrado con éxito'); 
+            onClose(); 
+        } else {
+            throw new Error('Respuesta vacía del servidor');
+        }
+  
     } catch (error) {
         setError((error as Error).message); // Guarda el mensaje de error
     }
-};
-
+  };
+  
+  
 
   if (!isOpen) return null;
 
@@ -163,9 +173,9 @@ const Perfil: React.FC<PerfilProps> = ({ isOpen, onClose }) => {
           src="/src/assets/img/cerrar.png"
           alt="Cerrar"
           onClick={onClose}
-          />
-      {error && <div style={{ color: 'red' }}>{error}</div>} {/* Muestra el mensaje de error */}
-      {success && <div style={{ color: 'green' }}>{success}</div>} {/* Muestra el mensaje de éxito */}
+        />
+        {error && <div style={{ color: 'red' }}>{error}</div>} 
+        {success && <div style={{ color: 'green' }}>{success}</div>}
       </ModalContent>
     </ModalOverlay>
   );

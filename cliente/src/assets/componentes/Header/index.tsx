@@ -18,7 +18,7 @@ const Contenido = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 100px;
   margin-top: 20px;
   margin-bottom: 20px;
 `;

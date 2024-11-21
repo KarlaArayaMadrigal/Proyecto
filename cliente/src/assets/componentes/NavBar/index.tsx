@@ -49,17 +49,59 @@ const Icon = styled.svg`
   cursor: pointer;
 `;
 
-// Suponiendo que tienes una lista de productos
-const productos = [
-  { id: 1, tipo_prenda: "Camisa" },
-  { id: 2, tipo_prenda: "Pantalón" },
-  { id: 3, tipo_prenda: "Chaqueta" },
-  { id: 4, tipo_prenda: "Zapatos" },
-];
+// Estilo para las Cards de los productos
+const CardContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+  margin-left: 360px;
+`;
+
+const Card = styled.div`
+  width: 240px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: -700px;
+  margin-top: 120px;
+`;
+
+const CardImage = styled.img`
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  margin-right: 10px;
+`;
+
+const CardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const CardTitle = styled.h4`
+  font-size: 14px;
+  margin: 0 0 5px 0;
+  color: #333;
+`;
+
+const CardPrice = styled.p`
+  font-size: 12px;
+  color: #555;
+`;
 
 const Navegacion = () => {
   const [isPerfilOpen, setIsPerfilOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [productos, setProductos] = useState<any[]>([]); // Estado para almacenar los productos
+  const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const [error, setError] = useState<string | null>(null); // Estado para errores
 
   const openPerfilModal = () => {
     setIsPerfilOpen(true);
@@ -69,15 +111,36 @@ const Navegacion = () => {
     setIsPerfilOpen(false);
   };
 
-  // Manejar el cambio en el input de búsqueda
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+  // Realizar la búsqueda al backend
+  const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchText(query);
+  
+    if (query.trim() === "") {
+      setProductos([]); // Vaciar resultados si no hay texto
+      return;
+    }
+  
+    try {
+      setIsLoading(true);
+      setError(null);
+  
+      const response = await fetch(
+        `http://localhost/Proyecto-Desarrollo/backend/src/models/Inventario.php?tipo_prenda=${query}`
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      setProductos(data);
+    } catch (err: any) {
+      setError(err.message); // Ahora err es del tipo any, por lo que TypeScript no marcará error
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  // Filtrar productos basados en el tipo_prenda
-  const filteredProducts = productos.filter(producto =>
-    producto.tipo_prenda.toLowerCase().includes(searchText.toLowerCase())
-  );
+  
 
   return (
     <Contenido>
@@ -85,9 +148,9 @@ const Navegacion = () => {
         <InputContainer>
           <Input
             type="text"
-            placeholder="Buscar..."
+            placeholder="Buscar por tipo de prenda..."
             value={searchText}
-            onChange={handleSearchChange} // Captura el texto ingresado
+            onChange={handleSearchChange}
           />
           <SearchIcon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M10 2a8 8 0 105.3 14.3l4.7 4.7a1 1 0 001.4-1.4l-4.7-4.7A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z" />
@@ -108,20 +171,27 @@ const Navegacion = () => {
 
       {isPerfilOpen && <Perfil isOpen={isPerfilOpen} onClose={closePerfilModal} />}
 
-      {/* Mostrar productos filtrados */}
+      {/* Mostrar resultados en Cards */}
       {searchText && (
-        <div style={{ marginTop: '20px', marginLeft: '360px' }}>
-          <h3>Resultados de búsqueda:</h3>
-          {filteredProducts.length > 0 ? (
-            <ul>
-              {filteredProducts.map(producto => (
-                <li key={producto.id}>{producto.tipo_prenda}</li>
-              ))}
-            </ul>
+        <CardContainer>
+          {isLoading ? (
+            <p>Cargando...</p>
+          ) : error ? (
+            <p>Error: {error}</p>
+          ) : productos.length > 0 ? (
+            productos.map((producto: any) => (
+              <Card key={producto.id_inventario}>
+                <CardImage src={producto.imagen_url} alt={producto.tipo_prenda} />
+                <CardContent>
+                  <CardTitle>{producto.tipo_prenda}</CardTitle>
+                  <CardPrice>${producto.precio}</CardPrice>
+                </CardContent>
+              </Card>
+            ))
           ) : (
             <p>No se encontraron productos que coincidan con "{searchText}"</p>
           )}
-        </div>
+        </CardContainer>
       )}
     </Contenido>
   );

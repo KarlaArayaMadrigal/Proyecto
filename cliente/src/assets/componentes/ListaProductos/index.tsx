@@ -139,14 +139,24 @@ const ListaProductos = () => {
     return storedCart ? JSON.parse(storedCart) : [];
   });
   const [mensaje, setMensaje] = useState<{ texto: string; visible: boolean }>({ texto: '', visible: false });
+  const [tipoBusqueda, setTipoBusqueda] = useState<string>(''); // Estado para el tipo de búsqueda
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch('http://localhost/Proyecto-Desarrollo/backend/api.php')
+  // Obtener inventario con filtro opcional
+  const fetchInventario = useCallback(() => {
+    let url = 'http://localhost/Proyecto-Desarrollo/backend/src/models/Inventario.php';
+    if (tipoBusqueda) {
+      url += `?tipo_prenda=${tipoBusqueda}`;
+    }
+    fetch(url)
       .then((response) => response.json())
       .then((data) => setInventario(data))
       .catch((error) => console.error('Error fetching data:', error));
-  }, []);
+  }, [tipoBusqueda]);
+
+  useEffect(() => {
+    fetchInventario();
+  }, [fetchInventario]);
 
   useEffect(() => {
     localStorage.setItem('carrito', JSON.stringify(carrito));
@@ -157,20 +167,18 @@ const ListaProductos = () => {
     if (!existeEnCarrito) {
       setCarrito((prevCarrito) => [...prevCarrito, producto]);
       setMensaje({ texto: `${producto.tipo_prenda} agregado al carrito`, visible: true });
-      setTimeout(() => setMensaje({ texto: '', visible: false }), 3000); // Oculta el mensaje después de 3 segundos
+      setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
     } else {
       setMensaje({ texto: 'El producto ya está en el carrito.', visible: true });
       setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
     }
   }, [carrito]);
 
-  const irAlCarrito = () => {
-    navigate('/carrito', { state: { carrito } });
-  };
 
   return (
     <>
       <Titulo>Todos los productos</Titulo>
+
       {mensaje.texto && <MensajeExito visible={mensaje.visible}>{mensaje.texto}</MensajeExito>}
       <Container>
         {inventario.map((item) => (
@@ -193,4 +201,3 @@ const ListaProductos = () => {
 };
 
 export default ListaProductos;
-
