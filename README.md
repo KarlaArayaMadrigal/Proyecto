@@ -15,7 +15,7 @@
 
 ---
 
-##**EndPoints**
+**EndPoints**
 
 ### **1. Inventario**  
 Base Endpoint: `/inventario`
