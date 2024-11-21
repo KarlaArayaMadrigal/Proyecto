@@ -45,10 +45,10 @@ Base Endpoint: `/inventario`
     "imagen_url": "image.jpg"
   }
   
-PUT /inventario?id_inventario=1
+- **PUT /inventario?id_inventario=1
 Actualizar un producto por ID.
-Parámetros:
 
+Parámetros:
 id_inventario (en la URL).
 Cuerpo JSON:
 
@@ -60,15 +60,17 @@ Cuerpo JSON:
   "imagen_url": "new_image.jpg"
 }
 
-DELETE /inventario?id_inventario=1
+- **DELETE
+- /inventario?id_inventario=1
 Eliminar un producto por su ID.
-Parámetros:
 
+Parámetros:
 id_inventario (en la URL).
-2. Carrito
+
+- **2. Carrito
 Base Endpoint: /carrito
 
-POST /carrito
+- **POST /carrito
 Agregar un producto al carrito.
 Cuerpo JSON:
 
@@ -81,11 +83,11 @@ Cuerpo JSON:
   "tipo_prenda": "camisa"
 }
 
-GET /carrito
+- **GET /carrito
 Obtener los productos del carrito.
 Parámetros o Cuerpo: Ninguno.
 
-PUT /carrito
+- **PUT /carrito
 Actualizar la cantidad de un producto en el carrito.
 Cuerpo JSON:
 
@@ -93,15 +95,16 @@ Cuerpo JSON:
   "id_producto": 1,
   "cantidad": 5
 }
-DELETE /carrito?id_producto=1
+- **DELETE /carrito?id_producto=1
 Eliminar un producto del carrito por ID.
 Parámetros:
 
 id_producto (en la URL).
-3. Venta
+
+- **3. Venta
 Base Endpoint: /venta
 
-POST /venta
+- **POST /venta
 Registrar una nueva venta.
 Cuerpo JSON:
 
@@ -112,19 +115,20 @@ Cuerpo JSON:
   "cantidad": 2
 }
 
-GET /venta
+- **GET /venta
 Obtener todas las ventas.
 Parámetros o Cuerpo: Ninguno.
 
-GET /venta?id_venta=1
+- **GET /venta?id_venta=1
 Obtener una venta por ID.
 Parámetros:
 
 id_venta (en la URL).
-4. Usuario
+
+- **4. Usuario
 Base Endpoint: /usuario
 
-POST /usuario
+- **POST /usuario
 Crear un nuevo usuario.
 Cuerpo JSON:
 
@@ -134,11 +138,11 @@ Cuerpo JSON:
   "password": "securepassword"
 }
 
-GET /usuario
+- **GET /usuario
 Obtener todos los usuarios.
 Parámetros o Cuerpo: Ninguno.
 
-GET /usuario?id=1
+- **GET /usuario?id=1
 Obtener un usuario por ID.
 Parámetros:
 
@@ -156,7 +160,7 @@ Cuerpo JSON:
   "password": "newpassword"
 }
 
-DELETE /usuario?id=1
+- **DELETE /usuario?id=1
 Eliminar un usuario por ID.
 Parámetros:
 
