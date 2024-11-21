@@ -44,6 +44,7 @@ Base Endpoint: `/inventario`
     "precio": 5000,
     "imagen_url": "image.jpg"
   }
+  
 PUT /inventario?id_inventario=1
 Actualizar un producto por ID.
 Parámetros:
@@ -58,6 +59,7 @@ Cuerpo JSON:
   "precio": 4500,
   "imagen_url": "new_image.jpg"
 }
+
 DELETE /inventario?id_inventario=1
 Eliminar un producto por su ID.
 Parámetros:
@@ -78,6 +80,7 @@ Cuerpo JSON:
   "imagen_url": "image.jpg",
   "tipo_prenda": "camisa"
 }
+
 GET /carrito
 Obtener los productos del carrito.
 Parámetros o Cuerpo: Ninguno.
@@ -108,6 +111,7 @@ Cuerpo JSON:
   "precio": 5000,
   "cantidad": 2
 }
+
 GET /venta
 Obtener todas las ventas.
 Parámetros o Cuerpo: Ninguno.
@@ -129,6 +133,7 @@ Cuerpo JSON:
   "email": "john@example.com",
   "password": "securepassword"
 }
+
 GET /usuario
 Obtener todos los usuarios.
 Parámetros o Cuerpo: Ninguno.
@@ -150,6 +155,7 @@ Cuerpo JSON:
   "email": "john.smith@example.com",
   "password": "newpassword"
 }
+
 DELETE /usuario?id=1
 Eliminar un usuario por ID.
 Parámetros:
