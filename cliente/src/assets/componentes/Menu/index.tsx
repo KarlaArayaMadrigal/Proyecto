@@ -40,6 +40,11 @@ const Menu = () => {
             Productos
           </Enlace>
         </li>
+        <li>
+          <Enlace to="/promociones" isSelected={currentPath === "/promociones"}>
+            Promos
+          </Enlace>
+        </li>
       </Lista>
     </div>
   );

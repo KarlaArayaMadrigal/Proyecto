@@ -15,22 +15,30 @@ $queryString = $_SERVER['QUERY_STRING'];
 
 parse_str($queryString, $queryParams);
 
-/*if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
+// index.php
+require_once 'controllers/VentaController.php';
+
+// Verifica qué método se está llamando
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if (isset($_GET['id'])) {
+        // Obtener venta por ID
+        $controller = new VentaController();
+        $controller->obtenerVentaPorId($_GET['id']);
+    } else {
+        // Obtener todas las ventas
+        $controller = new VentaController();
+        $controller->obtenerVentas();
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Crear una nueva venta
+    $controller = new VentaController();
+    $controller->crearVenta();
+} elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE' && isset($_GET['id'])) {
+    // Eliminar venta
+    $controller = new VentaController();
+    $controller->eliminarVenta($_GET['id']);
+} else {
+    echo json_encode(['error' => 'Método no permitido']);
 }
 
-// Ruta principal: redirecciona según el módulo
-$uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-
-switch ($uri[0]) {
-    case 'inventario':
-        include 'controllers/InventarioController.php';
-        break;
-
-    default:
-        http_response_code(404);
-        echo json_encode(['message' => 'Endpoint no encontrado']);
-        break;
-}*/
 ?>

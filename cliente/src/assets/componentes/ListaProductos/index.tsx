@@ -139,7 +139,7 @@ const ListaProductos = () => {
     return storedCart ? JSON.parse(storedCart) : [];
   });
   const [mensaje, setMensaje] = useState<{ texto: string; visible: boolean }>({ texto: '', visible: false });
-  const [tipoBusqueda, setTipoBusqueda] = useState<string>(''); // Estado para el tipo de búsqueda
+  const [tipoBusqueda, setTipoBusqueda] = useState<string>('');
   const navigate = useNavigate();
 
   // Obtener inventario con filtro opcional
