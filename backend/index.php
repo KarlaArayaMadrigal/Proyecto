@@ -15,30 +15,18 @@ $queryString = $_SERVER['QUERY_STRING'];
 
 parse_str($queryString, $queryParams);
 
-// index.php
 require_once 'controllers/VentaController.php';
 
-// Verifica qué método se está llamando
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_GET['id'])) {
-        // Obtener venta por ID
-        $controller = new VentaController();
-        $controller->obtenerVentaPorId($_GET['id']);
-    } else {
-        // Obtener todas las ventas
-        $controller = new VentaController();
-        $controller->obtenerVentas();
-    }
-} elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Crear una nueva venta
-    $controller = new VentaController();
-    $controller->crearVenta();
-} elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE' && isset($_GET['id'])) {
-    // Eliminar venta
-    $controller = new VentaController();
-    $controller->eliminarVenta($_GET['id']);
-} else {
-    echo json_encode(['error' => 'Método no permitido']);
-}
+$ventaController = new VentaController();
 
-?>
+// Definir las rutas para manejar solicitudes GET
+
+// Ruta para obtener todas las ventas
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_SERVER['REQUEST_URI'] == '/ventas') {
+    $ventaController->obtenerVentas();
+} elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && preg_match('/^\/venta\/([0-9]+)$/', $_SERVER['REQUEST_URI'], $matches)) {
+    // Ruta para obtener una venta por ID
+    $ventaController->obtenerVentaPorId($matches[1]);
+} else {
+    echo json_encode(['message' => 'Ruta no encontrada']);
+}

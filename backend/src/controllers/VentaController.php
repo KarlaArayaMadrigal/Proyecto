@@ -1,5 +1,8 @@
 <?php
-// controllers/VentaController.php
+header("Access-Control-Allow-Origin: http://localhost:5173"); // Permite solicitudes desde el frontend
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); // Métodos permitidos
+header("Access-Control-Allow-Headers: Content-Type"); // Cabeceras permitidas
+
 require_once '../models/Venta.php';
 
 class VentaController {
@@ -12,7 +15,12 @@ class VentaController {
     // Método para obtener todas las ventas
     public function obtenerVentas() {
         $ventas = $this->model->obtenerVentas();
-        echo json_encode($ventas); // Devuelve las ventas en formato JSON
+
+        if ($ventas) {
+            echo json_encode($ventas);
+        } else {
+            echo json_encode(['message' => 'No se encontraron ventas']);
+        }
     }
 
     // Método para obtener una venta por su ID
@@ -22,10 +30,9 @@ class VentaController {
     }
 
     // Método para crear una venta
-    public function crearVenta() {
+    public function create() {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        // Verificar si los datos necesarios están presentes
+
         if (isset($data['id_usuario'], $data['precio'], $data['id_inventario'], $data['tipo_prenda'], $data['cantidad'])) {
             $id_usuario = $data['id_usuario'];
             $precio = $data['precio'];
@@ -55,7 +62,7 @@ class VentaController {
         }
     }
 }
-
 ?>
+
 
 

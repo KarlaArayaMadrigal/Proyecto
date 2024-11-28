@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Header from "../componentes/Header";
 import styled, { createGlobalStyle } from "styled-components";
 
@@ -17,10 +17,11 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 interface Venta {
-  idVenta: number;
-  nombreProducto: string;
+  id_venta: number;
+  precio: number;
+  id_inventario: number;
+  tipo_prenda: string;
   cantidad: number;
-  fecha: string;
 }
 
 const Contenedor = styled.div`
@@ -74,25 +75,33 @@ const NoData = styled.tr`
 
 const Promocion = () => {
   const [ventas, setVentas] = useState<Venta[]>([]);
-  const [error, setError] = useState<string | null>(null);  // Para manejar errores
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Realizamos la solicitud GET al endpoint
-    fetch('http://localhost/Proyecto-Desarrollo/backend/src/models/Venta.php')
-      .then(response => response.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setVentas(data);
-        } else {
-          setError('No se encontraron ventas');
+  const fetchVentas = useCallback(() => {
+    const url = "http://localhost/Proyecto-Desarrollo/backend/src/models/Venta.php";
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al obtener los datos");
         }
+        return response.json();
       })
-      .catch(err => {
-        setError('Hubo un error al obtener las ventas');
-        console.error(err);
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        setVentas(data);
+      })
+      .catch((error) => {
+        setError(error.message);
+        console.error("Error fetching data:", error);
       });
   }, []);
 
+  useEffect(() => {
+    fetchVentas();
+  }, [fetchVentas]);
 
   return (
     <>
@@ -101,31 +110,33 @@ const Promocion = () => {
 
       <Contenedor>
         <Titulo>Listado de Ventas</Titulo>
-        
-        {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}  {/* Mostrar errores */}
+
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
         <Tabla>
           <thead>
             <tr>
               <TablaEncabezado>ID Venta</TablaEncabezado>
-              <TablaEncabezado>Nombre del Producto</TablaEncabezado>
+              <TablaEncabezado>Precio</TablaEncabezado>
+              <TablaEncabezado>ID Inventario</TablaEncabezado>
+              <TablaEncabezado>Tipo de Prenda</TablaEncabezado>
               <TablaEncabezado>Cantidad</TablaEncabezado>
-              <TablaEncabezado>Fecha</TablaEncabezado>
             </tr>
           </thead>
           <tbody>
             {ventas.length > 0 ? (
-              ventas.map((venta, index) => (
-                <TablaFilaImpar key={venta.idVenta}>
-                  <TablaCelda>{venta.idVenta}</TablaCelda>
-                  <TablaCelda>{venta.nombreProducto}</TablaCelda>
+              ventas.map((venta) => (
+                <TablaFilaImpar key={venta.id_venta}>
+                  <TablaCelda>{venta.id_venta}</TablaCelda>
+                  <TablaCelda>{venta.precio}</TablaCelda>
+                  <TablaCelda>{venta.id_inventario}</TablaCelda>
+                  <TablaCelda>{venta.tipo_prenda}</TablaCelda>
                   <TablaCelda>{venta.cantidad}</TablaCelda>
-                  <TablaCelda>{venta.fecha}</TablaCelda>
                 </TablaFilaImpar>
               ))
             ) : (
               <NoData>
-                <td colSpan={4}>No hay ventas registradas.</td>
+                <td colSpan={5}>No hay ventas registradas.</td>
               </NoData>
             )}
           </tbody>
@@ -136,3 +147,4 @@ const Promocion = () => {
 };
 
 export default Promocion;
+

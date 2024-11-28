@@ -235,14 +235,11 @@ const Carrito: React.FC = () => {
   };
 
   const handleEliminarProducto = (id: number) => {
-    // Eliminar el producto del carrito
     const newCarrito = carrito.filter((producto) => producto.id_inventario !== id);
     setCarrito(newCarrito);
 
-    // Eliminar del localStorage
     localStorage.setItem("carrito", JSON.stringify(newCarrito));
 
-    // Eliminar también de los productos seleccionados y checkboxes
     setSeleccionados((prevSeleccionados) =>
       prevSeleccionados.filter((item) => item.id_inventario !== id)
     );
@@ -255,12 +252,12 @@ const Carrito: React.FC = () => {
 
   const handleConfirmarCompra = async () => {
     const productosSeleccionados = seleccionados
-      .filter((item) => item.cantidad > 0)  // Filtramos los productos con cantidad mayor a 0
+      .filter((item) => item.cantidad > 0)  
       .map((seleccionado) => {
         const producto = carrito.find(
           (p) => p.id_inventario === seleccionado.id_inventario
         );
-        return { ...producto, cantidad: seleccionado.cantidad };  // Añadimos la cantidad seleccionada
+        return { ...producto, cantidad: seleccionado.cantidad };  
       });
   
     if (productosSeleccionados.length === 0) {
