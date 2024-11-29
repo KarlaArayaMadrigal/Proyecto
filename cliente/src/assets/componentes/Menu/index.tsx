@@ -41,8 +41,13 @@ const Menu = () => {
           </Enlace>
         </li>
         <li>
-          <Enlace to="/promociones" isSelected={currentPath === "/promociones"}>
-            Promos
+          <Enlace to="/ventas" isSelected={currentPath === "/ventas"}>
+            Ventas
+          </Enlace>
+        </li>
+        <li>
+          <Enlace to="/inventario" isSelected={currentPath === "/inventario"}>
+            Inventario
           </Enlace>
         </li>
       </Lista>

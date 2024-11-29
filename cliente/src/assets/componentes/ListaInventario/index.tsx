@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Container = styled.section`
   display: grid;
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 20px; 
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   padding: 20px;
   background-color: #f4f4f9;
   max-width: 100%;
@@ -20,7 +20,7 @@ const Container = styled.section`
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -74,31 +74,25 @@ const Precio = styled.p`
   margin-top: 10px;
 `;
 
-const Talla = styled.p`
+const Cantidad = styled.p`
   font-size: 16px;
   color: #555;
   margin-top: 5px;
 `;
 
-const Marca = styled.p`
-  font-size: 16px;
-  color: #555;
-  margin-top: 5px;
-`;
-
-const BotonComprar = styled.button`
+const BotonAccion = styled.button`
   padding: 10px 20px;
-  background-color: ${({ disabled }) => (disabled ? "#ccc" : "#000000")};
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  cursor: pointer;
   margin-top: 15px;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${({ disabled }) => (disabled ? "#ccc" : "#2d4d63")};
+    background-color: #2d4d63;
   }
 `;
 
@@ -129,31 +123,22 @@ const MensajeExito = styled.p<{ visible: boolean }>`
 `;
 
 interface Producto {
-  id_producto: number;
+  id_inventario: number;
   id_marca: number | null;
-  marca: string;
-  articulo: string;
-  talla: number;
+  tipo_prenda: string;
+  cantidad_disponible: number;
   precio: number;
   imagen_url: string;
 }
 
-const ListaProductos = () => {
+const ListaInventario = () => {
   const [inventario, setInventario] = useState<Producto[]>([]);
-  const [carrito, setCarrito] = useState<Producto[]>(() => {
-    const storedCart = localStorage.getItem('carrito');
-    return storedCart ? JSON.parse(storedCart) : [];
-  });
   const [mensaje, setMensaje] = useState<{ texto: string; visible: boolean }>({ texto: '', visible: false });
-  const [tipoBusqueda, setTipoBusqueda] = useState<string>('');
   const navigate = useNavigate();
 
-
+  // Obtener inventario
   const fetchInventario = useCallback(() => {
-    let url = 'http://localhost/Proyecto-Desarrollo/backend/index.php/producto';
-    if (tipoBusqueda) {
-      url += `?tipo_prenda=${tipoBusqueda}`;
-    }
+    const url = 'http://localhost/Proyecto-Desarrollo/backend/index.php/inventario';
     fetch(url)
       .then((response) => {
         if (!response.ok) {
@@ -173,26 +158,38 @@ const ListaProductos = () => {
         setMensaje({ texto: 'Error al cargar los productos', visible: true });
         setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
       });
-  }, [tipoBusqueda]);
+  }, []);
 
   useEffect(() => {
     fetchInventario();
   }, [fetchInventario]);
 
-  useEffect(() => {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-  }, [carrito]);
+  const handleEditar = (id: number) => {
+    
+    navigate(`/editar/${id}`);
+  };
 
-  const handleComprar = useCallback((producto: Producto) => {
-    const productoEnCarrito = carrito.find((item) => item.id_producto === producto.id_producto);
-    if (!productoEnCarrito) {
-      setCarrito((prevCarrito) => [...prevCarrito, producto]);
-      setMensaje({ texto: `${producto.articulo} agregado al carrito`, visible: true });
-    } else if (productoEnCarrito.talla > 0) {
-      setMensaje({ texto: 'El producto ya está en el carrito.', visible: true });
+  const handleEliminar = (id: number) => {
+    const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
+    if (confirmacion) {
+      fetch(`http://localhost/Proyecto-Desarrollo/backend/index.php/inventario`, {
+        method: 'DELETE',
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Error al eliminar el producto');
+          }
+          setInventario((prevInventario) => prevInventario.filter((item) => item.id_inventario !== id));
+          setMensaje({ texto: 'Producto eliminado con éxito', visible: true });
+          setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
+        })
+        .catch((error) => {
+          console.error('Error al eliminar el producto:', error);
+          setMensaje({ texto: 'Error al eliminar el producto', visible: true });
+          setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
+        });
     }
-    setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
-  }, [carrito]);
+  };
 
   return (
     <>
@@ -206,18 +203,15 @@ const ListaProductos = () => {
 
       <Container>
         {inventario.map((item) => (
-          <Cards key={item.id_producto}>
-            <Image src={item.imagen_url} alt={item.articulo} />
-            <ProductoNombre>{item.articulo}</ProductoNombre>
-            <Marca> Marca: {item.marca}</Marca>
-            <Talla>Talla disponible: {item.talla}</Talla>
+          <Cards key={item.id_inventario}>
+            <Image src={item.imagen_url} alt={item.tipo_prenda} />
+            <ProductoNombre>{item.tipo_prenda}</ProductoNombre>
+            <Cantidad>Cantidad disponible: {item.cantidad_disponible}</Cantidad>
             <Precio>Precio: ₡{item.precio}</Precio>
-            <BotonComprar
-              onClick={() => handleComprar(item)}
-              disabled={item.talla === 0}
-            >
-              {item.talla === 0 ? 'Sin stock' : 'Comprar'}
-            </BotonComprar>
+            <div>
+              <BotonAccion onClick={() => handleEditar(item.id_inventario)}>Editar</BotonAccion>
+              <BotonAccion onClick={() => handleEliminar(item.id_inventario)}>Eliminar</BotonAccion>
+            </div>
           </Cards>
         ))}
       </Container>
@@ -225,4 +219,4 @@ const ListaProductos = () => {
   );
 };
 
-export default ListaProductos;
+export default ListaInventario;

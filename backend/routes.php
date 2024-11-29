@@ -1,28 +1,27 @@
 <?php
-// Headers comunes para manejo de CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Manejo de solicitudes OPTIONS (CORS)
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Incluye controladores y configuración
+
 require_once __DIR__ . '/src/db/DbConnect.php';
 require_once __DIR__ . '/src/controllers/InventarioController.php';
 require_once __DIR__ . '/src/controllers/CarritoController.php';
 require_once __DIR__ . '/src/controllers/VentaController.php';
 require_once __DIR__ . '/src/controllers/UsuarioController.php';
+require_once __DIR__ . '/src/controllers/ProductoController.php';
 
-// Obtén el método HTTP y la ruta solicitada
+
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestUri = trim($requestUri, '/');
 
-// Define las rutas y controla las solicitudes
 switch ($requestUri) {
     case 'inventario':
         $controller = new InventarioController();
@@ -30,7 +29,7 @@ switch ($requestUri) {
             if (isset($_GET['id_inventario'])) {
                 $controller->getById($_GET['id_inventario']);
             }
-            }
+        }
 
     case 'carrito':
         $controller = new CarritoController();
@@ -70,12 +69,37 @@ switch ($requestUri) {
     case 'usuario':
         $usuarioController = new UsuarioController();
 
-if ($method === 'POST' && $url === '/usuarios') {
-    $usuarioController->create();
-} else {
-    http_response_code(404);
-    echo json_encode(['error' => 'Ruta no encontrada']);
+        if ($method === 'POST' && $url === '/usuarios') {
+            $usuarioController->create();
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ruta no encontrada']);
+        }
+        case 'producto':
+            $productoController = new ProductoController();
+            if ($method === 'GET') {
+                if (isset($_GET['id_producto'])) {
+                    $productoController->getById($_GET['id_producto']);
+                } else {
+                    $productoController->index(); 
+                }
+            } elseif ($method === 'POST') {
+                $productoController->create(); 
+            } elseif ($method === 'PUT') {
+                parse_str(file_get_contents("php://input"), $putData);
+                if (isset($putData['id_producto'])) {
+                    $productoController->update($putData['id_producto'], $putData);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'ID de producto requerido']);
+                }
+            } elseif ($method === 'DELETE') {
+                if (isset($_GET['id_producto'])) {
+                    $productoController->delete($_GET['id_producto']);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'ID de producto requerido']);
+                }
+            }
+            break;
 }
-}
-?>
-

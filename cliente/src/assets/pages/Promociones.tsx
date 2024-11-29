@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 
-const Promocion = () => {
+const Ventas = () => {
   return (
     <>
       <GlobalStyle />
@@ -22,5 +22,5 @@ const Promocion = () => {
   );
 };
 
-export default Promocion;
+export default Ventas;
 
