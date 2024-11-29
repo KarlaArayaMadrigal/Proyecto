@@ -1,6 +1,6 @@
 <?php
 require_once './src/models/Carrito.php';
-require_once './src/models/Venta.php'; 
+require_once './src/models/Venta.php'; // Asegúrate de incluir el modelo de Venta
 include_once './src/db/DbConnect.php';
 
 class CarritoController {
@@ -16,8 +16,8 @@ class CarritoController {
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (isset($data['id_usuario'], $data['productos'])) {
-            
-            $id_venta = $this->ventaModel->create(); 
+            // Aquí deberías crear una venta y obtener el id_venta
+            $id_venta = $this->ventaModel->create(); // Asegúrate de que este método devuelva el ID de la venta
 
             if (!$id_venta) {
                 http_response_code(500);
@@ -25,6 +25,7 @@ class CarritoController {
                 return;
             }
 
+            // Agregar al carrito
             $response = $this->model->agregarAlCarrito($data['productos'], $id_venta);
             echo json_encode($response);
         } else {

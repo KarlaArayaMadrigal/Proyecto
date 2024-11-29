@@ -6,7 +6,7 @@ class DbConnect {
     private $password = 'admin';
     private $conn;
     public function getConnection() {
-        
+        // Establecer la conexión a la base de datos utilizando PDO
         if ($this->conn === null) {
             try {
                 $this->conn = new PDO("mysql:host=$this->host;dbname=$this->dbName", $this->username, $this->password);

@@ -8,21 +8,21 @@ require_once './src/models/Inventario.php';
 include_once './src/db/DbConnect.php';
 
 class InventarioController {
-    private $db; 
+    private $db; // Cambia esto a la propiedad correcta
     private $conn;
 
     public function __construct()
     {
         $db = new DbConnect();
         $this->conn = $db->getConnection();
-        $this->db = $this->conn; 
+        $this->db = $this->conn; // Asigna la conexión a la propiedad $db
     }
 
-    
+    // Listar todos los elementos del inventario
     public function index() {
         try {
             $query = "SELECT * FROM inventario";
-            $stmt = $this->conn->query($query); 
+            $stmt = $this->conn->query($query); // Usa $this->conn en lugar de $this->db
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($result);
         } catch (PDOException $e) {
@@ -31,10 +31,11 @@ class InventarioController {
         }
     }
 
+    // Obtener un elemento del inventario por ID
     public function getById($id) {
         try {
             $query = "SELECT * FROM inventario WHERE id = :id";
-            $stmt = $this->conn->prepare($query); 
+            $stmt = $this->conn->prepare($query); // Usa $this->conn en lugar de $this->db
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
