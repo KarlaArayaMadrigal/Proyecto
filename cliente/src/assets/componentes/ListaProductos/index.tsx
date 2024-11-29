@@ -12,11 +12,11 @@ const Container = styled.section`
   margin: 0 auto;
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+    grid-template-columns: repeat(3, 1fr);
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+    grid-template-columns: repeat(2, 1fr);
   }
 
   @media (max-width: 480px) {
@@ -96,7 +96,6 @@ const BotonComprar = styled.button`
   }
 `;
 
-// Componente MensajeExito con 'visible' correctamente tipado
 const MensajeExito = styled.p<{ visible: boolean }>`
   color: #fff;
   background-color: #28a745;
@@ -115,7 +114,7 @@ const MensajeExito = styled.p<{ visible: boolean }>`
   transition: opacity 0.3s ease-in-out;
 
   &::before {
-    content: "✔"; /* Ícono de éxito */
+    content: "✔"; 
     margin-right: 10px;
     font-size: 20px;
   }
@@ -144,14 +143,29 @@ const ListaProductos = () => {
 
   // Obtener inventario con filtro opcional
   const fetchInventario = useCallback(() => {
-    let url = 'http://localhost/Proyecto-Desarrollo/backend/src/models/Inventario.php';
+    let url = 'http://localhost/Proyecto-Desarrollo/backend/index.php/inventario';
     if (tipoBusqueda) {
       url += `?tipo_prenda=${tipoBusqueda}`;
     }
     fetch(url)
-      .then((response) => response.json())
-      .then((data) => setInventario(data))
-      .catch((error) => console.error('Error fetching data:', error));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setInventario(data);
+        } else {
+          throw new Error('Formato de datos inválido');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setMensaje({ texto: 'Error al cargar los productos', visible: true });
+        setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
+      });
   }, [tipoBusqueda]);
 
   useEffect(() => {
@@ -163,23 +177,26 @@ const ListaProductos = () => {
   }, [carrito]);
 
   const handleComprar = useCallback((producto: Producto) => {
-    const existeEnCarrito = carrito.some((item) => item.id_inventario === producto.id_inventario);
-    if (!existeEnCarrito) {
+    const productoEnCarrito = carrito.find((item) => item.id_inventario === producto.id_inventario);
+    if (!productoEnCarrito) {
       setCarrito((prevCarrito) => [...prevCarrito, producto]);
       setMensaje({ texto: `${producto.tipo_prenda} agregado al carrito`, visible: true });
-      setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
-    } else {
+    } else if (productoEnCarrito.cantidad_disponible > 0) {
       setMensaje({ texto: 'El producto ya está en el carrito.', visible: true });
-      setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
     }
+    setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
   }, [carrito]);
-
 
   return (
     <>
       <Titulo>Todos los productos</Titulo>
 
-      {mensaje.texto && <MensajeExito visible={mensaje.visible}>{mensaje.texto}</MensajeExito>}
+      {mensaje.texto && (
+        <MensajeExito visible={mensaje.visible} role="alert" aria-live="assertive">
+          {mensaje.texto}
+        </MensajeExito>
+      )}
+
       <Container>
         {inventario.map((item) => (
           <Cards key={item.id_inventario}>
