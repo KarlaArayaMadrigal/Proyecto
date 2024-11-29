@@ -3,30 +3,27 @@ header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
 
-require '../src/routes.php';
+require_once __DIR__ . '/src/controllers/VentaController.php';
+require_once __DIR__ . '/src/controllers/InventarioController.php';
 
-$method = $_SERVER;
+$method = $_SERVER['REQUEST_METHOD'];
+$url = str_replace('/Proyecto-Desarrollo/backend/index.php', '', $_SERVER['REQUEST_URI']);
 
-$path = trim($_SERVER['PATH_INFO'], characters: '/');
-
-$segments = explode('/', $path);
-
-$queryString = $_SERVER['QUERY_STRING'];
-
-parse_str($queryString, $queryParams);
-
-require_once 'controllers/VentaController.php';
 
 $ventaController = new VentaController();
+$inventarioController = new InventarioController();
 
-// Definir las rutas para manejar solicitudes GET
+if ($method === 'GET' && $url === '/ventas') {
+    $ventaController->index();
+} elseif ($method === 'GET' && preg_match('/^\/venta\/([0-9]+)$/', $url, $matches)) {
+    $ventaController->getById($matches[1]);
+}
 
-// Ruta para obtener todas las ventas
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_SERVER['REQUEST_URI'] == '/ventas') {
-    $ventaController->obtenerVentas();
-} elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && preg_match('/^\/venta\/([0-9]+)$/', $_SERVER['REQUEST_URI'], $matches)) {
-    // Ruta para obtener una venta por ID
-    $ventaController->obtenerVentaPorId($matches[1]);
+elseif ($method === 'GET' && $url === '/inventario') {
+    $inventarioController->index();
+} elseif ($method === 'GET' && preg_match('/^\/inventario\/([0-9]+)$/', $url, $matches)) {
+    $inventarioController->getById($matches[1]);
 } else {
+    http_response_code(404);
     echo json_encode(['message' => 'Ruta no encontrada']);
 }

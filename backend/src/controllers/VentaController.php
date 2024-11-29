@@ -1,68 +1,94 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:5173"); // Permite solicitudes desde el frontend
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE"); // Métodos permitidos
-header("Access-Control-Allow-Headers: Content-Type"); // Cabeceras permitidas
+require_once './src/models/Venta.php';
+include_once './src/db/DbConnect.php';
 
-require_once '../models/Venta.php';
+header("Content-Type: application/json");
 
-class VentaController {
-    private $model;
+class VentaController
+{
+    public function index()
+    {
+        $venta = new Venta();
+        
+        // Intentamos obtener los datos
+        $result = $venta->getAll();
 
-    public function __construct() {
-        $this->model = new Venta();
-    }
-
-    // Método para obtener todas las ventas
-    public function obtenerVentas() {
-        $ventas = $this->model->obtenerVentas();
-
-        if ($ventas) {
-            echo json_encode($ventas);
+        if ($result) {
+            echo json_encode($result);
         } else {
-            echo json_encode(['message' => 'No se encontraron ventas']);
+            http_response_code(404);
+            echo json_encode(['error' => 'No se encontraron ventas']);
         }
     }
 
-    // Método para obtener una venta por su ID
-    public function obtenerVentaPorId($id) {
-        $venta = $this->model->obtenerVentaPorId($id);
-        echo json_encode($venta); // Devuelve la venta en formato JSON
+    public function getById($id)
+    {
+        $venta = new Venta();
+        $result = $venta->getById($id);
+
+        if ($result) {
+            echo json_encode($result);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Venta no encontrada']);
+        }
     }
 
-    // Método para crear una venta
-    public function create() {
-        $data = json_decode(file_get_contents('php://input'), true);
+    public function create()
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
 
-        if (isset($data['id_usuario'], $data['precio'], $data['id_inventario'], $data['tipo_prenda'], $data['cantidad'])) {
-            $id_usuario = $data['id_usuario'];
-            $precio = $data['precio'];
-            $id_inventario = $data['id_inventario'];
-            $tipo_prenda = $data['tipo_prenda'];
-            $cantidad = $data['cantidad'];
-
-            $resultado = $this->model->crearVenta($id_usuario, $precio, $id_inventario, $tipo_prenda, $cantidad);
-
-            if ($resultado) {
-                echo json_encode(['message' => 'Venta creada con éxito']);
-            } else {
-                echo json_encode(['message' => 'Error al crear la venta']);
-            }
-        } else {
+        if (!isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'])) {
+            http_response_code(400);
             echo json_encode(['error' => 'Datos incompletos']);
+            return;
+        }
+
+        $venta = new Venta();
+        $venta->precio = $data['precio'];
+        $venta->marca = $data['marca'];
+        $venta->tipo_prenda = $data['tipo_prenda'];
+        $venta->cantidad = $data['cantidad'];
+
+        if ($venta->create()) {
+            http_response_code(201);
+            echo json_encode(['message' => 'Venta creada exitosamente']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'No se pudo crear la venta']);
         }
     }
 
-    // Método para eliminar una venta por su ID
-    public function eliminarVenta($id) {
-        $resultado = $this->model->eliminarVenta($id);
-        if ($resultado) {
-            echo json_encode(['message' => 'Venta eliminada con éxito']);
+    public function update($id, $data)
+    {
+        $venta = new Venta();
+        $venta->id_venta = $id;
+        $venta->precio = $data['precio'] ?? null;
+        $venta->marca = $data['marca'] ?? null;
+        $venta->tipo_prenda = $data['tipo_prenda'] ?? null;
+        $venta->cantidad = $data['cantidad'] ?? null;
+
+        if ($venta->update()) {
+            echo json_encode(['message' => 'Venta actualizada']);
         } else {
-            echo json_encode(['message' => 'Error al eliminar la venta']);
+            http_response_code(500);
+            echo json_encode(['error' => 'No se pudo actualizar la venta']);
+        }
+    }
+
+    public function delete($id)
+    {
+        $venta = new Venta();
+        if ($venta->delete($id)) {
+            echo json_encode(['message' => 'Venta eliminada']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'No se pudo eliminar la venta']);
         }
     }
 }
 ?>
+
 
 
 
