@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import ModalEditar from '../ModalEditar';
+import ModalAgregarProducto from '../ModalAgregaProducto';
 
 const Container = styled.section`
   display: grid;
@@ -10,6 +11,7 @@ const Container = styled.section`
   background-color: #f4f4f9;
   max-width: 100%;
   margin: 0 auto;
+  font-family: "Afacad Flux", sans-serif;
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
@@ -88,40 +90,30 @@ const BotonAccion = styled.button`
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
-  margin-top: 15px;
+  margin-bottom: 16px;
   transition: background-color 0.3s ease;
 
   &:hover {
     background-color: #2d4d63;
   }
 `;
-
-const MensajeExito = styled.p<{ visible: boolean }>`
-  color: #fff;
-  background-color: #28a745;
-  text-align: center;
-  margin-top: -60px;
+const BotonAgregar = styled.button`
+  padding: 10px 20px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 5px;
   font-size: 16px;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 8px;
-  max-width: 400px;
-  margin-left: 830px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: opacity 0.3s ease-in-out;
+  cursor: pointer;
+  margin-top: -15px;
+  margin-left: 100px;
+  margin-bottom: 16px;
+  transition: background-color 0.3s ease;
 
-  &::before {
-    content: "✔"; 
-    margin-right: 10px;
-    font-size: 20px;
+  &:hover {
+    background-color: #2d4d63;
   }
-
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
 `;
-
 interface Producto {
   id_inventario: number;
   id_marca: number | null;
@@ -133,10 +125,16 @@ interface Producto {
 
 const ListaInventario = () => {
   const [inventario, setInventario] = useState<Producto[]>([]);
-  const [mensaje, setMensaje] = useState<{ texto: string; visible: boolean }>({ texto: '', visible: false });
-  const navigate = useNavigate();
+  const [productoEditar, setProductoEditar] = useState<Producto | null>(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalAgregarAbierto, setModalAgregarAbierto] = useState(false);
 
-  // Obtener inventario
+
+  const handleDelete = (id_inventario: number) => {
+    console.log('Eliminar producto con id:', id_inventario);
+    setInventario((prevInventario) => prevInventario.filter((item) => item.id_inventario !== id_inventario));
+  };
+
   const fetchInventario = useCallback(() => {
     const url = 'http://localhost/Proyecto-Desarrollo/backend/index.php/inventario';
     fetch(url)
@@ -155,8 +153,6 @@ const ListaInventario = () => {
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
-        setMensaje({ texto: 'Error al cargar los productos', visible: true });
-        setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
       });
   }, []);
 
@@ -164,41 +160,39 @@ const ListaInventario = () => {
     fetchInventario();
   }, [fetchInventario]);
 
-  const handleEditar = (id: number) => {
-    
-    navigate(`/editar/${id}`);
+  const handleEditar = (producto: Producto) => {
+    setProductoEditar(producto);
+    setModalAbierto(true);
   };
 
-  const handleEliminar = (id: number) => {
-    const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
-    if (confirmacion) {
-      fetch(`http://localhost/Proyecto-Desarrollo/backend/index.php/inventario`, {
-        method: 'DELETE',
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Error al eliminar el producto');
-          }
-          setInventario((prevInventario) => prevInventario.filter((item) => item.id_inventario !== id));
-          setMensaje({ texto: 'Producto eliminado con éxito', visible: true });
-          setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
-        })
-        .catch((error) => {
-          console.error('Error al eliminar el producto:', error);
-          setMensaje({ texto: 'Error al eliminar el producto', visible: true });
-          setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
-        });
-    }
+  const handleCerrarModal = () => {
+    setModalAbierto(false);
+    setProductoEditar(null);
+  };
+
+  const handleAbrirModalAgregar = () => {
+    setModalAgregarAbierto(true); 
+  };
+
+  const handleCerrarModalAgregar = () => {
+    setModalAgregarAbierto(false); 
   };
 
   return (
     <>
-      <Titulo>Todos los productos</Titulo>
+      <Titulo>Inventario</Titulo>
+      <BotonAgregar onClick={handleAbrirModalAgregar}>Agregar Producto</BotonAgregar>
 
-      {mensaje.texto && (
-        <MensajeExito visible={mensaje.visible} role="alert" aria-live="assertive">
-          {mensaje.texto}
-        </MensajeExito>
+      {modalAbierto && productoEditar && (
+        <ModalEditar
+          producto={productoEditar}
+          onClose={handleCerrarModal}
+          onDelete={() => handleDelete(productoEditar.id_inventario)}
+        />
+      )}
+
+      {modalAgregarAbierto && (
+        <ModalAgregarProducto onClose={handleCerrarModalAgregar} />
       )}
 
       <Container>
@@ -209,14 +203,15 @@ const ListaInventario = () => {
             <Cantidad>Cantidad disponible: {item.cantidad_disponible}</Cantidad>
             <Precio>Precio: ₡{item.precio}</Precio>
             <div>
-              <BotonAccion onClick={() => handleEditar(item.id_inventario)}>Editar</BotonAccion>
-              <BotonAccion onClick={() => handleEliminar(item.id_inventario)}>Eliminar</BotonAccion>
+              <BotonAccion onClick={() => handleEditar(item)}>Editar</BotonAccion>
             </div>
           </Cards>
         ))}
       </Container>
+
     </>
   );
 };
 
 export default ListaInventario;
+

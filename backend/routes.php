@@ -28,8 +28,28 @@ switch ($requestUri) {
         if ($method === 'GET') {
             if (isset($_GET['id_inventario'])) {
                 $controller->getById($_GET['id_inventario']);
+            } else {
+                $controller->index(); // Para obtener todos los elementos del inventario
+            }
+        } elseif ($method === 'POST') {
+            $controller->create();
+        } elseif ($method === 'PUT') {
+            parse_str(file_get_contents("php://input"), $putData);
+            if (isset($putData['id_inventario'])) {
+                $controller->update($putData['id_inventario'], $putData);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID de inventario requerido']);
+            }
+        } elseif ($method === 'DELETE') {
+            if (isset($_GET['id_inventario'])) {
+                $controller->delete($_GET['id_inventario']);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID de inventario requerido']);
             }
         }
+        break;
 
     case 'carrito':
         $controller = new CarritoController();

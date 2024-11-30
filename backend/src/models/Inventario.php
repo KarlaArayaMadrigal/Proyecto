@@ -48,17 +48,27 @@ class Inventario {
     }
 
     public function updateInventario($id, $data) {
-        $query = "UPDATE inventario 
-                  SET tipo_prenda = :tipo_prenda, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url
-                  WHERE id_inventario = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':tipo_prenda', $data['tipo_prenda'], PDO::PARAM_STR);
-        $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible'], PDO::PARAM_INT);
-        $stmt->bindParam(':precio', $data['precio'], PDO::PARAM_STR);
-        $stmt->bindParam(':imagen_url', $data['imagen_url'], PDO::PARAM_STR);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
+            $query = "UPDATE inventario 
+                      SET tipo_prenda = :tipo_prenda, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url
+                      WHERE id_inventario = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':tipo_prenda', $data['tipo_prenda'], PDO::PARAM_STR);
+            $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible'], PDO::PARAM_INT);
+            $stmt->bindParam(':precio', $data['precio'], PDO::PARAM_STR);
+            $stmt->bindParam(':imagen_url', $data['imagen_url'], PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            
+            if ($stmt->execute()) {
+                return ["success" => true, "message" => "Producto actualizado exitosamente"];
+            } else {
+                return ["success" => false, "message" => "No se pudo actualizar el producto"];
+            }
+        } catch (PDOException $e) {
+            return ["success" => false, "message" => $e->getMessage()];
+        }
     }
+    
 
     public function deleteInventario($id) {
         $query = "DELETE FROM inventario WHERE id_inventario = :id";

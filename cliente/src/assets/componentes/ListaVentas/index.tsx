@@ -7,6 +7,7 @@ const Container = styled.div`
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Afacad Flux", sans-serif;
 `;
 
 const Title = styled.h2`

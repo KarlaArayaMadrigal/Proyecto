@@ -32,11 +32,11 @@ class InventarioController {
     }
 
     // Obtener un elemento del inventario por ID
-    public function getById($id) {
+    public function getById($id_inventario) {
         try {
-            $query = "SELECT * FROM inventario WHERE id = :id";
+            $query = "SELECT * FROM inventario WHERE id_inventario = :id_inventario"; // Cambiado de 'id' a 'id_inventario'
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':id_inventario', $id_inventario, PDO::PARAM_INT);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -52,7 +52,6 @@ class InventarioController {
         }
     }
 
-    // Crear un nuevo elemento en el inventario
     public function create() {
         $data = json_decode(file_get_contents("php://input"));
 
@@ -78,43 +77,36 @@ class InventarioController {
         }
     }
 
-    // Actualizar un elemento en el inventario
-    public function update($id) {
-        $data = json_decode(file_get_contents("php://input"));
-
-        if (isset($data->tipo_prenda, $data->cantidad_disponible, $data->precio, $data->imagen_url)) {
-            try {
-                $query = "UPDATE inventario SET tipo_prenda = :tipo_prenda, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url WHERE id = :id";
-                $stmt = $this->conn->prepare($query);
-                $stmt->bindParam(':tipo_prenda', $data->tipo_prenda);
-                $stmt->bindParam(':cantidad_disponible', $data->cantidad_disponible);
-                $stmt->bindParam(':precio', $data->precio);
-                $stmt->bindParam(':imagen_url', $data->imagen_url);
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-                $stmt->execute();
-
-                if ($stmt->rowCount() > 0) {
-                    echo json_encode(['message' => 'Elemento actualizado con éxito']);
-                } else {
-                    http_response_code(404);
-                    echo json_encode(['error' => 'Elemento no encontrado o no se realizaron cambios']);
-                }
-            } catch (PDOException $e) {
-                http_response_code(500);
-                echo json_encode(['error' => 'Error al actualizar el elemento: ' . $e->getMessage()]);
-            }
+    public function update($id_inventario, $data) {
+        $sql = "UPDATE inventario SET id_marca = :id_marca, tipo_prenda = :tipo_prenda, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url WHERE id_inventario = :id_inventario";
+        
+        $stmt = $this->conn->prepare($sql);
+    
+        // Vincular parámetros
+        $stmt->bindParam(':id_marca', $data['id_marca']);
+        $stmt->bindParam(':tipo_prenda', $data['tipo_prenda']);
+        $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible']);
+        $stmt->bindParam(':precio', $data['precio']);
+        $stmt->bindParam(':imagen_url', $data['imagen_url']);
+        $stmt->bindParam(':id_inventario', $id_inventario);
+    
+        // Ejecutar la declaración
+        if ($stmt->execute()) {
+            http_response_code(200);
+            echo json_encode(['message' => 'Inventario actualizado con éxito']);
         } else {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos incompletos']);
+            http_response_code(500);
+            $errorInfo = $stmt->errorInfo();
+            echo json_encode(['error' => 'Error al actualizar el inventario: ' . $errorInfo[2]]);
         }
     }
 
     // Eliminar un elemento del inventario
-    public function delete($id) {
+    public function delete($id_inventario) { // Cambiado de $id a $id_inventario
         try {
-            $query = "DELETE FROM inventario WHERE id = :id";
+            $query = "DELETE FROM inventario WHERE id_inventario = :id_inventario"; // Cambiado de 'id' a 'id_inventario'
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':id_inventario', $id_inventario, PDO::PARAM_INT);
             $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
