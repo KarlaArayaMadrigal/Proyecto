@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-
+// Estilos
 const Container = styled.section`
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
@@ -10,7 +10,6 @@ const Container = styled.section`
   background-color: #f4f4f9;
   justify-items: center; 
   
-  /* Para pantallas pequeñas, ajustamos el número de columnas */
   @media (max-width: 1024px) {
     grid-template-columns: repeat(3, 1fr); 
   }
@@ -38,7 +37,6 @@ const NoArticulos = styled.p`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   max-width: 80%;
   margin: 0 auto;
-  margin-right: -440px;
 `;
 
 const Titulo = styled.h1`
@@ -78,7 +76,6 @@ const ProductoImagen = styled.img`
   height: 200px; 
   object-fit: cover;
   border-radius: 8px;
-  object-fit: contain;
 `;
 
 const ProductoNombre = styled.h2`
@@ -130,11 +127,11 @@ const ActionContainer = styled.div`
 const CheckboxContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-right: 10px; 
+  margin-right : 10px; 
 `;
 
 const CheckboxLabel = styled.label`
-font-family: "Afacad Flux", sans-serif;
+  font-family: "Afacad Flux", sans-serif;
   font-size: 16px;
   color: #333;
   margin-left: 5px;
@@ -148,8 +145,7 @@ const BorrarIcon = styled.img`
 
 const SelectButtonContainer = styled.div`
   text-align: center;
-  margin-top: -519px;
-  margin-left: 900px;
+  margin-top: 20px;
 `;
 
 const SelectButton = styled.button`
@@ -169,11 +165,13 @@ const SelectButton = styled.button`
   }
 `;
 
+// Interfaces
 interface Producto {
   id_inventario: number;
   tipo_prenda: string;
-  precio: string;
+  precio: number; 
   imagen_url: string;
+  marca: string;
 }
 
 interface ProductoSeleccionado {
@@ -181,6 +179,7 @@ interface ProductoSeleccionado {
   cantidad: number;
 }
 
+// Componente
 const ListaCarrito: React.FC = () => {
   const [carrito, setCarrito] = useState<Producto[]>([]);
   const [seleccionados, setSeleccionados] = useState<ProductoSeleccionado[]>([]);
@@ -190,14 +189,10 @@ const ListaCarrito: React.FC = () => {
     const storedCarrito = localStorage.getItem("carrito");
     if (storedCarrito) {
       const productos = JSON.parse(storedCarrito);
-
-      // Eliminar productos duplicados
       const productosUnicos = productos.filter(
         (producto: Producto, index: number, self: Producto[]) =>
-          self.findIndex((p) => p.id_inventario === producto.id_inventario) ===
-          index
+          self.findIndex((p) => p.id_inventario === producto.id_inventario) === index
       );
-
       setCarrito(productosUnicos);
     }
   }, []);
@@ -229,9 +224,7 @@ const ListaCarrito: React.FC = () => {
   const handleEliminarProducto = (id: number) => {
     const newCarrito = carrito.filter((producto) => producto.id_inventario !== id);
     setCarrito(newCarrito);
-
     localStorage.setItem("carrito", JSON.stringify(newCarrito));
-
     setSeleccionados((prevSeleccionados) =>
       prevSeleccionados.filter((item) => item.id_inventario !== id)
     );
@@ -244,13 +237,33 @@ const ListaCarrito: React.FC = () => {
 
   const handleConfirmarCompra = async () => {
     const productosSeleccionados = seleccionados
-      .filter((item) => item.cantidad > 0)  
+      .filter((item) => item.cantidad > 0) 
       .map((seleccionado) => {
         const producto = carrito.find(
           (p) => p.id_inventario === seleccionado.id_inventario
         );
-        return { ...producto, cantidad: seleccionado.cantidad };  
-      });
+  
+        if (!producto) {
+          console.error(`Producto con id_inventario ${seleccionado.id_inventario} no encontrado en el carrito.`);
+          return null;
+        }
+  
+       
+        if (!producto.precio || !producto.marca || !producto.tipo_prenda) {
+          console.error(`Producto con id_inventario ${producto.id_inventario} tiene datos incompletos.`);
+          return null;
+        }
+  
+        return {
+          id_venta: Date.now(),
+          marca: producto.marca,
+          precio: producto.precio,
+          id_inventario: producto.id_inventario,
+          tipo_prenda: producto.tipo_prenda,
+          cantidad: seleccionado.cantidad,
+        };
+      })
+      .filter((item) => item !== null);
   
     if (productosSeleccionados.length === 0) {
       alert("Selecciona al menos un producto y cantidad para confirmar la compra.");
@@ -258,89 +271,112 @@ const ListaCarrito: React.FC = () => {
     }
   
     try {
-      const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/src/models/Venta.php', {  
+      const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/index.php/ventas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ productos: productosSeleccionados }), 
+        body: JSON.stringify({ productos: productosSeleccionados }),
       });
   
-      if (response.ok) {
-        alert("Compra confirmada!");
-        console.log("Productos seleccionados enviados al backend:", productosSeleccionados);
+      if (!response.ok) {
         
-      } else {
-        alert("Error al confirmar la compra. Intenta nuevamente.");
+        try {
+          const errorData = await response.json();
+          alert("Error: " + (errorData.message || "Error desconocido"));
+        } catch (e) {
+          
+          const errorText = await response.text();
+          alert("Error: " + errorText);
+        }
+        return;
       }
-    } catch (error) {
-      alert("Hubo un error al procesar tu compra.");
-      console.error(error);
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        alert("Compra realizada exitosamente");
+        setCarrito([]);
+        setSeleccionados([]);
+        setCheckboxes({});
+        localStorage.removeItem("carrito");
+      } else {
+        alert("Ocurrió un problema al realizar la compra.");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert("Error en la solicitud: " + error.message);
+      } else {
+        alert("Error desconocido en la solicitud.");
+      }
     }
   };
   
+  
 
   return (
-    <>
-      <Titulo>Carrito de compras</Titulo>
-      <Container>
-        {carrito.length === 0 ? (
-          <NoArticulos>No hay artículos en el carrito.</NoArticulos>
-        ) : (
-          carrito.map((producto) => (
-            <Cards key={producto.id_inventario}>
-              <ProductoImagen
-                src={producto.imagen_url}
-                alt={producto.tipo_prenda}
-              />
-              <ProductoNombre>{producto.tipo_prenda}</ProductoNombre>
-              <Precio>Precio: ${producto.precio}</Precio>
-              <InputCantidadContainer>
-                <label htmlFor={`cantidad-${producto.id_inventario}`}>
-                  Cantidad:
-                </label>
-                <InputCantidad
-                  id={`cantidad-${producto.id_inventario}`}
-                  type="number"
-                  min="1"
-                  defaultValue="1"
-                  onChange={(e) =>
-                    handleCantidadChange(
-                      producto.id_inventario,
-                      parseInt(e.target.value, 10) || 1
-                    )
-                  }
-                />
-              </InputCantidadContainer>
-              <ActionContainer>
-                <CheckboxContainer>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${producto.id_inventario}`}
-                    checked={checkboxes[producto.id_inventario] || false}
-                    onChange={() => handleCheckboxChange(producto.id_inventario)}
+    <div>
+      <Titulo>Lista de Productos en el Carrito</Titulo>
+      {carrito.length === 0 ? (
+        <NoArticulos>No hay artículos en el carrito.</NoArticulos>
+      ) : (
+        <>
+          <Container>
+            {carrito.map((producto) => (
+              <Cards key={producto.id_inventario}>
+                <ProductoImagen src={producto.imagen_url} alt={producto.tipo_prenda} />
+                <ProductoNombre>{producto.tipo_prenda}</ProductoNombre>
+                <Precio>
+                  $
+                  {typeof producto.precio === "number" 
+                    ? producto.precio.toFixed(2) 
+                    : "Precio no disponible"}
+                </Precio>
+                <InputCantidadContainer>
+                  <label htmlFor={`cantidad-${producto.id_inventario}`}>Cantidad:</label>
+                  <InputCantidad
+                    id={`cantidad-${producto.id_inventario}`}
+                    type="number"
+                    min="1"
+                    onChange={(e) =>
+                      handleCantidadChange(
+                        producto.id_inventario,
+                        parseInt(e.target.value, 10)
+                      )
+                    }
                   />
-                  <CheckboxLabel htmlFor={`checkbox-${producto.id_inventario}`}>
-                    Seleccionar
-                  </CheckboxLabel>
-                </CheckboxContainer>
-                <BorrarIcon
-                  src="/src/assets/img/borrar.png"
-                  alt="Borrar"
-                  onClick={() => handleEliminarProducto(producto.id_inventario)}
-                />
-              </ActionContainer>
-            </Cards>
-          ))
-        )}
-      </Container>
-      <SelectButtonContainer>
-        <SelectButton onClick={handleConfirmarCompra}>
-          Confirmar compra
-        </SelectButton>
-      </SelectButtonContainer>
-    </>
+                </InputCantidadContainer>
+                <ActionContainer>
+                  <CheckboxContainer>
+                    <input
+                      type="checkbox"
+                      id={`checkbox-${producto.id_inventario}`}
+                      checked={checkboxes[producto.id_inventario] || false}
+                      onChange={() => handleCheckboxChange(producto.id_inventario)}
+                    />
+                    <CheckboxLabel htmlFor={`checkbox-${producto.id_inventario}`}>
+                      Seleccionar
+                    </CheckboxLabel>
+                  </CheckboxContainer>
+                  <BorrarIcon
+                    src='../assets/img/borrar.png'
+                    alt="Eliminar"
+                    onClick={() => handleEliminarProducto(producto.id_inventario)}
+                  />
+                </ActionContainer>
+              </Cards>
+            ))}
+          </Container>
+          <SelectButtonContainer>
+            <SelectButton onClick={handleConfirmarCompra}>
+              Confirmar Compra
+            </SelectButton>
+          </SelectButtonContainer>
+        </>
+      )}
+    </div>
   );
 };
 
 export default ListaCarrito;
+

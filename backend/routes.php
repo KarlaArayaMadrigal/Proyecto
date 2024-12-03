@@ -58,33 +58,55 @@ switch ($requestUri) {
         }
         break;
 
-    case 'venta':
-        $controller = new VentaController();
-        if ($method === 'GET') {
-            if (isset($_GET['id_venta'])) {
-                $controller->getById($_GET['id_venta']);
-            } else {
-                $controller->index();
+        case 'venta':
+            $controller = new VentaController();
+            if ($method === 'GET') {
+                if (isset($_GET['id_venta'])) {
+                    $controller->getById($_GET['id_venta']);
+                } else {
+                    $controller->index();
+                }
+            } elseif ($method === 'POST') {
+                // Leer el cuerpo de la solicitud
+                $data = json_decode(file_get_contents("php://input"), true);
+                
+                // Comprobar si hay productos en los datos
+                if (isset($data['productos']) && !empty($data['productos'])) {
+                    // Asegurarse de que los datos de la venta sean completos
+                    if (isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'], $data['id_inventario'])) {
+                        $controller->create($data); // Pasar los datos completos de la venta y los productos al controlador
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Datos de venta incompletos']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Datos de productos requeridos']);
+                }
+            } elseif ($method === 'PUT') {
+                parse_str(file_get_contents("php://input"), $putData);
+                if (isset($putData['id_venta'])) {
+                    // Verificar que los datos necesarios estén presentes
+                    if (isset($putData['precio'], $putData['marca'], $putData['tipo_prenda'], $putData['cantidad'])) {
+                        $controller->update($putData['id_venta'], $putData);
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Datos incompletos para la actualización']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'ID de venta requerido']);
+                }
+            } elseif ($method === 'DELETE') {
+                if (isset($_GET['id_venta'])) {
+                    $controller->delete($_GET['id_venta']);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'ID de venta requerido']);
+                }
             }
-        } elseif ($method === 'POST') {
-            $controller->create();
-        } elseif ($method === 'PUT') {
-            parse_str(file_get_contents("php://input"), $putData);
-            if (isset($putData['id_venta'])) {
-                $controller->update($putData['id_venta'], $putData);
-            } else {
-                http_response_code(400);
-                echo json_encode(['error' => 'ID de venta requerido']);
-            }
-        } elseif ($method === 'DELETE') {
-            if (isset($_GET['id_venta'])) {
-                $controller->delete($_GET['id_venta']);
-            } else {
-                http_response_code(400);
-                echo json_encode(['error' => 'ID de venta requerido']);
-            }
-        }
-        break;
+            break;
+        
 
     case 'usuario':
         $usuarioController = new UsuarioController();

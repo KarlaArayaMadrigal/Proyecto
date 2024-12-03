@@ -10,6 +10,7 @@ const Container = styled.section`
   background-color: #f4f4f9;
   max-width: 100%;
   margin: 0 auto;
+  font-family: "Afacad Flux", sans-serif;
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
@@ -86,6 +87,18 @@ const Marca = styled.p`
   margin-top: 5px;
 `;
 
+const TipoPrenda = styled.p`
+  font-size: 16px;
+  color: #555;
+  margin-top: 5px;
+`;
+
+const CantidadDisponible = styled.p`
+  font-size: 16px;
+  color: #555;
+  margin-top: 5px;
+`;
+
 const BotonComprar = styled.button`
   padding: 10px 20px;
   background-color: ${({ disabled }) => (disabled ? "#ccc" : "#000000")};
@@ -129,11 +142,10 @@ const MensajeExito = styled.p<{ visible: boolean }>`
 `;
 
 interface Producto {
-  id_producto: number;
+  id_inventario: number;
   id_marca: number | null;
-  marca: string;
-  articulo: string;
-  talla: number;
+  tipo_prenda: string;
+  cantidad_disponible: number;
   precio: number;
   imagen_url: string;
 }
@@ -148,9 +160,8 @@ const ListaProductos = () => {
   const [tipoBusqueda, setTipoBusqueda] = useState<string>('');
   const navigate = useNavigate();
 
-
   const fetchInventario = useCallback(() => {
-    let url = 'http://localhost/Proyecto-Desarrollo/backend/index.php/producto';
+    let url = 'http://localhost/Proyecto-Desarrollo/backend/index.php/inventario';
     if (tipoBusqueda) {
       url += `?tipo_prenda=${tipoBusqueda}`;
     }
@@ -184,11 +195,11 @@ const ListaProductos = () => {
   }, [carrito]);
 
   const handleComprar = useCallback((producto: Producto) => {
-    const productoEnCarrito = carrito.find((item) => item.id_producto === producto.id_producto);
+    const productoEnCarrito = carrito.find((item) => item.id_inventario === producto.id_inventario);
     if (!productoEnCarrito) {
       setCarrito((prevCarrito) => [...prevCarrito, producto]);
-      setMensaje({ texto: `${producto.articulo} agregado al carrito`, visible: true });
-    } else if (productoEnCarrito.talla > 0) {
+      setMensaje({ texto: `Producto agregado al carrito`, visible: true });
+    } else if (productoEnCarrito.cantidad_disponible > 0) {
       setMensaje({ texto: 'El producto ya está en el carrito.', visible: true });
     }
     setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
@@ -206,17 +217,19 @@ const ListaProductos = () => {
 
       <Container>
         {inventario.map((item) => (
-          <Cards key={item.id_producto}>
-            <Image src={item.imagen_url} alt={item.articulo} />
-            <ProductoNombre>{item.articulo}</ProductoNombre>
-            <Marca> Marca: {item.marca}</Marca>
-            <Talla>Talla disponible: {item.talla}</Talla>
+          <Cards key={item.id_inventario}>
+            <Image src={item.imagen_url} alt={item.tipo_prenda} />
+            <ProductoNombre>{item.tipo_prenda}</ProductoNombre>
+            <Marca>Marca: {item.id_marca}</Marca>
+            <TipoPrenda>Tipo: {item.tipo_prenda}</TipoPrenda>
+            <Talla>Cantidad disponible: {item.cantidad_disponible}</Talla>
             <Precio>Precio: ₡{item.precio}</Precio>
+            <CantidadDisponible>Cantidad disponible: {item.cantidad_disponible}</CantidadDisponible>
             <BotonComprar
               onClick={() => handleComprar(item)}
-              disabled={item.talla === 0}
+              disabled={item.cantidad_disponible === 0}
             >
-              {item.talla === 0 ? 'Sin stock' : 'Comprar'}
+              {item.cantidad_disponible === 0 ? 'Sin stock' : 'Comprar'}
             </BotonComprar>
           </Cards>
         ))}

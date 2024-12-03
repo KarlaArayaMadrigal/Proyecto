@@ -37,20 +37,33 @@ class VentaController
     public function create()
     {
         $data = json_decode(file_get_contents("php://input"), true);
-
-        if (!isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'])) {
+        
+        // Verificar que los productos estén presentes
+        if (!isset($data['productos']) || empty($data['productos'])) {
             http_response_code(400);
             echo json_encode(['error' => 'Datos incompletos']);
             return;
         }
 
+        // Verificar que los datos de la venta estén completos
+        if (!isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'], $data['id_inventario'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos de venta incompletos']);
+            return;
+        }
+
+        // Crear una instancia del modelo Venta
         $venta = new Venta();
+        
+        // Asignar los datos de la venta
         $venta->precio = $data['precio'];
         $venta->marca = $data['marca'];
         $venta->tipo_prenda = $data['tipo_prenda'];
         $venta->cantidad = $data['cantidad'];
+        $venta->id_inventario = $data['id_inventario'];
 
-        if ($venta->create()) {
+    
+        if ($venta->create($data['productos'])) {
             http_response_code(201);
             echo json_encode(['message' => 'Venta creada exitosamente']);
         } else {
@@ -59,14 +72,23 @@ class VentaController
         }
     }
 
-    public function update($id, $data)
+    public function update($id)
     {
+        $data = json_decode(file_get_contents("php://input"), true);
+        
+        // Verificar que los datos estén completos
+        if (!isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos incompletos']);
+            return;
+        }
+
         $venta = new Venta();
         $venta->id_venta = $id;
-        $venta->precio = $data['precio'] ?? null;
-        $venta->marca = $data['marca'] ?? null;
-        $venta->tipo_prenda = $data['tipo_prenda'] ?? null;
-        $venta->cantidad = $data['cantidad'] ?? null;
+        $venta->precio = $data['precio'];
+        $venta->marca = $data['marca'];
+        $venta->tipo_prenda = $data['tipo_prenda'];
+        $venta->cantidad = $data['cantidad'];
 
         if ($venta->update()) {
             echo json_encode(['message' => 'Venta actualizada']);
@@ -88,6 +110,8 @@ class VentaController
     }
 }
 ?>
+
+
 
 
 

@@ -155,9 +155,9 @@ const ModalAgregarProducto = ({
       setMensaje("Producto agregado correctamente");
       setError(false);
 
-      // Esperar un momento para mostrar el mensaje y luego recargar la página
+      
       setTimeout(() => {
-        window.location.reload(); // Recargar la página
+        window.location.reload(); 
       }, 1500);
     } catch (err) {
       setMensaje(
