@@ -52,9 +52,11 @@ class Inventario {
     public function updateInventario($id, $data) {
         try {
             $query = "UPDATE inventario 
-                      SET :marca = marca, tipo_prenda = :tipo_prenda, talla, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url
+                      SET marca = :marca, tipo_prenda = :tipo_prenda, talla = :talla, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url
                       WHERE id_inventario = :id";
             $stmt = $this->db->prepare($query);
+            
+            // Vincular parámetros
             $stmt->bindParam(':marca', $data['marca'], PDO::PARAM_STR);
             $stmt->bindParam(':tipo_prenda', $data['tipo_prenda'], PDO::PARAM_STR);
             $stmt->bindParam(':talla', $data['talla'], PDO::PARAM_STR);

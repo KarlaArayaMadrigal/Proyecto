@@ -18,10 +18,9 @@ class InventarioController {
         $this->db = $this->conn;
     }
 
-    // Listar todos los elementos del inventario
     public function index() {
         try {
-            $query = "SELECT * FROM inventario";
+            $query = "SELECT * FROM inventario"; 
             $stmt = $this->conn->query($query);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($result);
@@ -31,7 +30,6 @@ class InventarioController {
         }
     }
 
-    // Obtener un elemento del inventario por ID
     public function getById($id_inventario) {
         try {
             $query = "SELECT * FROM inventario WHERE id_inventario = :id_inventario"; // Cambiado de 'id' a 'id_inventario'
@@ -55,11 +53,11 @@ class InventarioController {
     public function create() {
         $data = json_decode(file_get_contents("php://input"));
     
-        if (isset($data->tipo_prenda, $data->talla, $data->cantidad_disponible, $data->precio, $data->imagen_url)) {
+        if (isset($data->tipo_prenda, $data->talla, $data->cantidad_disponible, $data->precio, $data->imagen_url, $data->marca)) { // Asegúrate de incluir 'marca' aquí
             try {
-                $query = "INSERT INTO inventario (marca, tipo_prenda, talla, cantidad_disponible, precio, imagen_url) VALUES (:tipo_prenda, :talla, :cantidad_disponible, :precio, :imagen_url)";
+                $query = "INSERT INTO inventario (marca, tipo_prenda, talla, cantidad_disponible, precio, imagen_url) VALUES (:marca, :tipo_prenda, :talla, :cantidad_disponible, :precio, :imagen_url)";
                 $stmt = $this->conn->prepare($query);
-                $stmt->bindParam(':marca', $data->marca);
+                $stmt->bindParam(':marca', $data->marca); // Asegúrate de que esto esté vinculado
                 $stmt->bindParam(':tipo_prenda', $data->tipo_prenda);
                 $stmt->bindParam(':talla', $data->talla);
                 $stmt->bindParam(':cantidad_disponible', $data->cantidad_disponible);
@@ -81,36 +79,53 @@ class InventarioController {
     }
     
 
-    public function update($id_inventario, $data) {
-        $sql = "UPDATE inventario SET id_marca = :id_marca, :marca = marca,tipo_prenda = :tipo_prenda, talla = :talla,  cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url WHERE id_inventario = :id_inventario";
+    public function update($id_inventario) {
+        $data = json_decode(file_get_contents("php://input"));
+    
         
-        $stmt = $this->conn->prepare($sql);
+        error_log(print_r($data, true));
     
-        // Vincular parámetros
-        $stmt->bindParam(':id_marca', $data['id_marca']);
-        $stmt->bindParam(':marca', $data['marca']);
-        $stmt->bindParam(':tipo_prenda', $data['tipo_prenda']);
-        $stmt->bindParam(':talla', $data['talla']);
-        $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible']);
-        $stmt->bindParam(':precio', $data['precio']);
-        $stmt->bindParam(':imagen_url', $data['imagen_url']);
-        $stmt->bindParam(':id_inventario', $id_inventario);
+        if (isset($data->tipo_prenda, $data->marca, $data->talla, $data->cantidad_disponible, $data->precio, $data->imagen_url)) {
+            try {
+                $sql = "UPDATE inventario SET marca = :marca, tipo_prenda = :tipo_prenda, talla = :talla, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url WHERE id_inventario = :id_inventario";
+                
+                $stmt = $this->conn->prepare($sql);
     
-        // Ejecutar la declaración
-        if ($stmt->execute()) {
-            http_response_code(200);
-            echo json_encode(['message' => 'Inventario actualizado con éxito']);
+                // Vincular parámetros
+                $stmt->bindParam(':marca', $data->marca);
+                $stmt->bindParam(':tipo_prenda', $data->tipo_prenda);
+                $stmt->bindParam(':talla', $data->talla);
+                $stmt->bindParam(':cantidad_disponible', $data->cantidad_disponible);
+                $stmt->bindParam(':precio', $data->precio);
+                $stmt->bindParam(':imagen_url', $data->imagen_url);
+                $stmt->bindParam(':id_inventario', $id_inventario);
+    
+                // Log antes de ejecutar
+                error_log("Ejecutando consulta: $sql con ID: $id_inventario");
+    
+                // Ejecutar la declaración
+                if ($stmt->execute()) {
+                    http_response_code(200);
+                    echo json_encode(['message' => 'Inventario actualizado con éxito']);
+                } else {
+                    http_response_code(500);
+                    $errorInfo = $stmt->errorInfo();
+                    echo json_encode(['error' => 'Error al actualizar el inventario: ' . $errorInfo[2]]);
+                }
+            } catch (PDOException $e) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Error al actualizar el inventario: ' . $e->getMessage()]);
+            }
         } else {
-            http_response_code(500);
-            $errorInfo = $stmt->errorInfo();
-            echo json_encode(['error' => 'Error al actualizar el inventario: ' . $errorInfo[2]]);
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos incompletos']);
         }
     }
 
-    // Eliminar un elemento del inventario
-    public function delete($id_inventario) { // Cambiado de $id a $id_inventario
+    
+    public function delete($id_inventario) {
         try {
-            $query = "DELETE FROM inventario WHERE id_inventario = :id_inventario"; // Cambiado de 'id' a 'id_inventario'
+            $query = "DELETE FROM inventario WHERE id_inventario = :id_inventario";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id_inventario', $id_inventario, PDO::PARAM_INT);
             $stmt->execute();

@@ -2,6 +2,17 @@ import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
+interface Producto {
+  id_inventario: number;
+  id_marca: number | null;
+  marca: string;
+  tipo_prenda: string;
+  talla: string; 
+  cantidad_disponible: number;
+  precio: number;
+  imagen_url: string;
+}
+
 const Container = styled.section`
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
@@ -87,12 +98,6 @@ const Marca = styled.p`
   margin-top: 5px;
 `;
 
-const TipoPrenda = styled.p`
-  font-size: 16px;
-  color: #555;
-  margin-top: 5px;
-`;
-
 const CantidadDisponible = styled.p`
   font-size: 16px;
   color: #555;
@@ -117,40 +122,30 @@ const BotonComprar = styled.button`
 
 const MensajeExito = styled.p<{ visible: boolean }>`
   color: #fff;
-  background-color: #28a745;
+  background-color: #0b1635;
   text-align: center;
-  margin-top: -60px;
+  margin-top: -49px;
   font-size: 16px;
   font-weight: bold;
-  padding: 10px;
+  padding: 15px;
   border-radius: 8px;
   max-width: 400px;
-  margin-left: 830px;
-  display: flex;
+  margin-left: 820px;
+  display: ${({ visible }) => (visible ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: ${({ visible }) => (visible ? '1' : '0')};
+  transform: ${({ visible }) => (visible ? 'translateY(0)' : 'translateY(-20px)')};
 
   &::before {
     content: "✔"; 
     margin-right: 10px;
     font-size: 20px;
   }
-
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
 `;
 
-interface Producto {
-  id_inventario: number;
-  id_marca: number | null;
-  marca : string;
-  tipo_prenda: string;
-  talla : string;
-  cantidad_disponible: number;
-  precio: number;
-  imagen_url: string;
-}
 
 const ListaProductos = () => {
   const [inventario, setInventario] = useState<Producto[]>([]);
@@ -174,7 +169,8 @@ const ListaProductos = () => {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data) => { 
+        console.log('Datos recibidos:', data); 
         if (Array.isArray(data)) {
           setInventario(data);
         } else {
@@ -201,7 +197,9 @@ const ListaProductos = () => {
     if (!productoEnCarrito) {
       setCarrito((prevCarrito) => [...prevCarrito, producto]);
       setMensaje({ texto: `Producto agregado al carrito`, visible: true });
-    } else if (productoEnCarrito.cantidad_disponible > 0) {
+    } else if (productoEnCarrito.cantidad_disponible === 0) {
+      setMensaje({ texto: 'El producto ya no está disponible.', visible: true });
+    } else {
       setMensaje({ texto: 'El producto ya está en el carrito.', visible: true });
     }
     setTimeout(() => setMensaje({ texto: '', visible: false }), 3000);
@@ -223,12 +221,13 @@ const ListaProductos = () => {
             <Image src={item.imagen_url} alt={item.tipo_prenda} />
             <ProductoNombre>{item.tipo_prenda}</ProductoNombre>
             <Marca>Marca: {item.marca}</Marca>
-            <Talla>Cantidad disponible: {item.talla}</Talla>
-            <Precio>Precio: ₡{item.precio}</Precio>
+            <Talla>Talla: {item.talla ? item.talla : 'No disponible'}</Talla>
             <CantidadDisponible>Cantidad disponible: {item.cantidad_disponible}</CantidadDisponible>
+            <Precio>Precio: ₡{item.precio}</Precio>
             <BotonComprar
               onClick={() => handleComprar(item)}
               disabled={item.cantidad_disponible === 0}
+              aria-label={item.cantidad_disponible === 0 ? 'Sin stock' : 'Comprar'}
             >
               {item.cantidad_disponible === 0 ? 'Sin stock' : 'Comprar'}
             </BotonComprar>

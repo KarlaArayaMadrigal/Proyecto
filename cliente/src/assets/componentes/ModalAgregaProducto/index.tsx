@@ -128,48 +128,49 @@ const ModalAgregarProducto = ({
     e.preventDefault();
 
     if (precio < 0 || cantidad < 0) {
-      setMensaje("El precio y la cantidad deben ser mayores o iguales a 0");
-      setError(true);
-      return;
+        setMensaje("El precio y la cantidad deben ser mayores o iguales a 0");
+        setError(true);
+        return;
     }
 
     try {
-      const response = await fetch(
-        "http://localhost/Proyecto-Desarrollo/backend/index.php/inventario",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tipo_prenda: nombre,
-            talla: talla,
-            cantidad_disponible: cantidad,
-            precio: precio,
-            imagen_url: imagen,
-          }),
+        const response = await fetch(
+            "http://localhost/Proyecto-Desarrollo/backend/index.php/inventario",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    tipo_prenda: nombre,
+                    talla: talla,
+                    cantidad_disponible: cantidad,
+                    precio: precio,
+                    imagen_url: imagen,
+                    marca: marca, // Asegúrate de incluir esto
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error de respuesta:", errorData); // Para depuración
+            throw new Error(errorData.message || "Error al agregar el producto");
         }
-      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error al agregar el producto");
-      }
+        setMensaje("Producto agregado correctamente");
+        setError(false);
 
-      setMensaje("Producto agregado correctamente");
-      setError(false);
-
-      
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1500);
+        setTimeout(() => {
+            window.location.reload(); 
+        }, 1500);
     } catch (err) {
-      setMensaje(
-        err instanceof Error ? err.message : "Error desconocido al agregar el producto"
-      );
-      setError(true);
+        setMensaje(
+            err instanceof Error ? err.message : "Error desconocido al agregar el producto"
+        );
+        setError(true);
     }
-  };
+};
 
   return (
     <Overlay>

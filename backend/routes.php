@@ -29,7 +29,7 @@ switch ($requestUri) {
             if (isset($_GET['id_inventario'])) {
                 $controller->getById($_GET['id_inventario']);
             } else {
-                $controller->index(); // Para obtener todos los elementos del inventario
+                $controller->index();
             }
         } elseif ($method === 'POST') {
             $controller->create();

@@ -106,6 +106,7 @@ const BotonAccion = styled.button`
     background-color: #2d4d63;
   }
 `;
+
 const BotonAgregar = styled.button`
   padding: 10px 20px;
   background-color: #000000;
@@ -123,12 +124,13 @@ const BotonAgregar = styled.button`
     background-color: #2d4d63;
   }
 `;
+
 interface Producto {
   id_inventario: number;
   id_marca: number | null;
-  marca : string;
+  marca: string;
   tipo_prenda: string;
-  talla : string;
+  talla: string;
   cantidad_disponible: number;
   precio: number;
   imagen_url: string;
@@ -139,7 +141,6 @@ const ListaInventario = () => {
   const [productoEditar, setProductoEditar] = useState<Producto | null>(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalAgregarAbierto, setModalAgregarAbierto] = useState(false);
-
 
   const handleDelete = (id_inventario: number) => {
     console.log('Eliminar producto con id:', id_inventario);
@@ -156,6 +157,7 @@ const ListaInventario = () => {
         return response.json();
       })
       .then((data) => {
+        console.log('Datos recibidos:', data); 
         if (Array.isArray(data)) {
           setInventario(data);
         } else {
@@ -182,11 +184,11 @@ const ListaInventario = () => {
   };
 
   const handleAbrirModalAgregar = () => {
-    setModalAgregarAbierto(true); 
+    setModalAgregarAbierto(true);
   };
 
   const handleCerrarModalAgregar = () => {
-    setModalAgregarAbierto(false); 
+    setModalAgregarAbierto(false);
   };
 
   return (
@@ -221,10 +223,8 @@ const ListaInventario = () => {
           </Cards>
         ))}
       </Container>
-
     </>
   );
 };
 
 export default ListaInventario;
-

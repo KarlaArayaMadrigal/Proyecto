@@ -122,6 +122,7 @@ interface Producto {
   id_marca: number | null;
   tipo_prenda: string;
   marca: string;
+  talla : string;
   cantidad_disponible: number;
   precio: number;
   imagen_url: string;
@@ -140,6 +141,7 @@ const ModalEditar = ({
   const [precio, setPrecio] = useState(producto.precio);
   const [imagen, setImagen] = useState(producto.imagen_url);
   const [marca, setMarca] = useState(producto.marca);
+  const [talla, setTalla] = useState(producto.talla);
   const [cantidad, setCantidad] = useState(producto.cantidad_disponible);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState(false);
@@ -149,6 +151,7 @@ const ModalEditar = ({
     setPrecio(producto.precio);
     setImagen(producto.imagen_url);
     setMarca(producto.marca);
+    setTalla(producto.talla);
     setCantidad(producto.cantidad_disponible);
     setMensaje("");
     setError(false);
@@ -158,49 +161,57 @@ const ModalEditar = ({
     e.preventDefault();
 
     if (precio < 0 || cantidad < 0) {
-      setMensaje("El precio y la cantidad deben ser mayores o iguales a 0");
-      setError(true);
-      return;
+        setMensaje("El precio y la cantidad deben ser mayores o iguales a 0");
+        setError(true);
+        return;
     }
+
+    // Imprimir los datos a enviar para depuración
+    const datosEnviar = {
+        tipo_prenda: nombre,
+        marca: marca,
+        talla: talla,
+        cantidad_disponible: cantidad,
+        precio: precio,
+        imagen_url: imagen,
+    };
+    console.log("Datos a enviar:", datosEnviar);
 
     try {
-      const response = await fetch(
-        `http://localhost/Proyecto-Desarrollo/backend/index.php/inventario/${producto.id_inventario}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tipo_prenda: nombre,
-            marca: marca,
-            cantidad_disponible: cantidad,
-            precio: precio,
-            imagen_url: imagen,
-          }),
+        const response = await fetch(
+            `http://localhost/Proyecto-Desarrollo/backend/index.php/inventario/${producto.id_inventario}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(datosEnviar),
+            }
+        );
+
+        // Manejo de errores
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => response.text());
+            console.error("Error de API:", errorData);
+            console.error("Estado de la respuesta:", response.status);
+            throw new Error(errorData.message || "Error al actualizar el producto");
         }
-      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error al actualizar el producto");
-      }
+        setMensaje("Producto actualizado correctamente");
+        setError(false);
 
-      setMensaje("Producto actualizado correctamente");
-      setError(false);
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     } catch (err) {
-      setMensaje(
-        err instanceof Error
-          ? err.message
-          : "Error desconocido al actualizar el producto"
-      );
-      setError(true);
+        setMensaje(
+            err instanceof Error
+                ? err.message
+                : "Error desconocido al actualizar el producto"
+        );
+        setError(true);
     }
-  };
+};
 
   const handleDelete = async () => {
     try {
@@ -215,9 +226,10 @@ const ModalEditar = ({
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error al eliminar el producto");
-      }
+    const errorData = await response.json();
+    console.error("Error de API:", errorData); // Imprime el error en la consola
+    throw new Error(errorData.message || "Error al actualizar el producto");
+}
 
       setMensaje("Producto eliminado correctamente");
       setError(false);
@@ -273,7 +285,14 @@ const ModalEditar = ({
             onChange={(e) => setMarca(e.target.value)}
             required
           />
-
+          <Label htmlFor="talle">Talla:</Label>
+          <Input
+            type="text"
+            id="talla"
+            value={talla}
+            onChange={(e) => setTalla(e.target.value)}
+            required
+          />
           <Label htmlFor="cantidad">Cantidad disponible:</Label>
           <Input
             type="number"
