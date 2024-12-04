@@ -237,80 +237,69 @@ const ListaCarrito: React.FC = () => {
 
   const handleConfirmarCompra = async () => {
     const productosSeleccionados = seleccionados
-      .filter((item) => item.cantidad > 0) 
-      .map((seleccionado) => {
-        const producto = carrito.find(
-          (p) => p.id_inventario === seleccionado.id_inventario
-        );
-  
-        if (!producto) {
-          console.error(`Producto con id_inventario ${seleccionado.id_inventario} no encontrado en el carrito.`);
-          return null;
-        }
-  
-       
-        if (!producto.precio || !producto.marca || !producto.tipo_prenda) {
-          console.error(`Producto con id_inventario ${producto.id_inventario} tiene datos incompletos.`);
-          return null;
-        }
-  
-        return {
-          id_venta: Date.now(),
-          marca: producto.marca,
-          precio: producto.precio,
-          id_inventario: producto.id_inventario,
-          tipo_prenda: producto.tipo_prenda,
-          cantidad: seleccionado.cantidad,
-        };
-      })
-      .filter((item) => item !== null);
-  
+        .filter((item) => item.cantidad > 0) 
+        .map((seleccionado) => {
+            const producto = carrito.find(
+                (p) => p.id_inventario === seleccionado.id_inventario
+            );
+
+            if (!producto) {
+                console.error(`Producto con id_inventario ${seleccionado.id_inventario} no encontrado en el carrito.`);
+                return null;
+            }
+
+            return {
+                id_inventario: producto.id_inventario,
+                marca: producto.marca,
+                precio: producto.precio.toString(), // Asegúrate de que el precio sea un string
+                tipo_prenda: producto.tipo_prenda,
+                cantidad: seleccionado.cantidad,
+            };
+        })
+        .filter((item) => item !== null);
+
     if (productosSeleccionados.length === 0) {
-      alert("Selecciona al menos un producto y cantidad para confirmar la compra.");
-      return;
-    }
-  
-    try {
-      const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/index.php/ventas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productos: productosSeleccionados }),
-      });
-  
-      if (!response.ok) {
-        
-        try {
-          const errorData = await response.json();
-          alert("Error: " + (errorData.message || "Error desconocido"));
-        } catch (e) {
-          
-          const errorText = await response.text();
-          alert("Error: " + errorText);
-        }
+        alert("Selecciona al menos un producto y cantidad para confirmar la compra.");
         return;
-      }
-  
-      const data = await response.json();
-  
-      if (data.success) {
-        alert("Compra realizada exitosamente");
-        setCarrito([]);
-        setSeleccionados([]);
-        setCheckboxes({});
-        localStorage.removeItem("carrito");
-      } else {
-        alert("Ocurrió un problema al realizar la compra.");
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        alert("Error en la solicitud: " + error.message);
-      } else {
-        alert("Error desconocido en la solicitud.");
-      }
     }
-  };
+
+    try {
+        const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/index.php/ventas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productos: productosSeleccionados }), // Asegúrate de que los datos estén en el formato correcto
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Error: " + (errorData.message || "Error desconocido"));
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data.message) {
+            alert("Compra realizada exitosamente");
+            setCarrito([]);
+            setSeleccionados([]);
+            setCheckboxes({});
+            localStorage.removeItem("carrito");
+        } else {
+            alert("Ocurrió un problema al realizar la compra.");
+        }
+    } catch (error) {
+        if (error instanceof Error) {
+            // Verifica si el error es una instancia de Error
+            alert("Error en la solicitud: " + error.message);
+        } else {
+            // Maneja otros tipos de errores desconocidos
+            alert("Ocurrió un error desconocido.");
+        }
+    }
+};
+
   
   
 

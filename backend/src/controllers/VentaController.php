@@ -10,7 +10,7 @@ class VentaController
     {
         $venta = new Venta();
         
-        // Intentamos obtener los datos
+        
         $result = $venta->getAll();
 
         if ($result) {
@@ -35,48 +35,42 @@ class VentaController
     }
 
     public function create()
-    {
-        $data = json_decode(file_get_contents("php://input"), true);
-        
-        // Verificar que los productos estén presentes
-        if (!isset($data['productos']) || empty($data['productos'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos incompletos']);
-            return;
-        }
-
-        // Verificar que los datos de la venta estén completos
-        if (!isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'], $data['id_inventario'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos de venta incompletos']);
-            return;
-        }
-
-        // Crear una instancia del modelo Venta
-        $venta = new Venta();
-        
-        // Asignar los datos de la venta
-        $venta->precio = $data['precio'];
-        $venta->marca = $data['marca'];
-        $venta->tipo_prenda = $data['tipo_prenda'];
-        $venta->cantidad = $data['cantidad'];
-        $venta->id_inventario = $data['id_inventario'];
+{
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    
+    if (!isset($data['productos']) || empty($data['productos'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Datos incompletos']);
+        return;
+    }
 
     
-        if ($venta->create($data['productos'])) {
-            http_response_code(201);
-            echo json_encode(['message' => 'Venta creada exitosamente']);
-        } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'No se pudo crear la venta']);
+    $venta = new Venta();
+    
+    
+    foreach ($data['productos'] as $producto) {
+        if (!isset($producto['id_inventario'], $producto['marca'], $producto['precio'], $producto['tipo_prenda'], $producto['cantidad'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos de producto incompletos']);
+            return;
         }
     }
+
+    if ($venta->create($data['productos'])) {
+        http_response_code(201);
+        echo json_encode(['message' => 'Venta creada exitosamente']);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'No se pudo crear la venta']);
+    }
+}
 
     public function update($id)
     {
         $data = json_decode(file_get_contents("php://input"), true);
         
-        // Verificar que los datos estén completos
+       
         if (!isset($data['precio'], $data['marca'], $data['tipo_prenda'], $data['cantidad'])) {
             http_response_code(400);
             echo json_encode(['error' => 'Datos incompletos']);
