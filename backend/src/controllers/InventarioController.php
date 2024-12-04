@@ -54,37 +54,43 @@ class InventarioController {
 
     public function create() {
         $data = json_decode(file_get_contents("php://input"));
-
-        if (isset($data->tipo_prenda, $data->cantidad_disponible, $data->precio, $data->imagen_url)) {
+    
+        if (isset($data->tipo_prenda, $data->talla, $data->cantidad_disponible, $data->precio, $data->imagen_url)) {
             try {
-                $query = "INSERT INTO inventario (tipo_prenda, cantidad_disponible, precio, imagen_url) VALUES (:tipo_prenda, :cantidad_disponible, :precio, :imagen_url)";
+                $query = "INSERT INTO inventario (marca, tipo_prenda, talla, cantidad_disponible, precio, imagen_url) VALUES (:tipo_prenda, :talla, :cantidad_disponible, :precio, :imagen_url)";
                 $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':marca', $data->marca);
                 $stmt->bindParam(':tipo_prenda', $data->tipo_prenda);
+                $stmt->bindParam(':talla', $data->talla);
                 $stmt->bindParam(':cantidad_disponible', $data->cantidad_disponible);
                 $stmt->bindParam(':precio', $data->precio);
                 $stmt->bindParam(':imagen_url', $data->imagen_url);
                 $stmt->execute();
-
+    
                 http_response_code(201);
                 echo json_encode(['message' => 'Elemento creado con éxito']);
             } catch (PDOException $e) {
+                error_log('Error en create: ' . $e->getMessage());
                 http_response_code(500);
-                echo json_encode(['error' => 'Error al crear el elemento: ' . $e->getMessage()]);
+                echo json_encode(['error' => 'Error al crear el elemento']);
             }
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Datos incompletos']);
         }
     }
+    
 
     public function update($id_inventario, $data) {
-        $sql = "UPDATE inventario SET id_marca = :id_marca, tipo_prenda = :tipo_prenda, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url WHERE id_inventario = :id_inventario";
+        $sql = "UPDATE inventario SET id_marca = :id_marca, :marca = marca,tipo_prenda = :tipo_prenda, talla = :talla,  cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url WHERE id_inventario = :id_inventario";
         
         $stmt = $this->conn->prepare($sql);
     
         // Vincular parámetros
         $stmt->bindParam(':id_marca', $data['id_marca']);
+        $stmt->bindParam(':marca', $data['marca']);
         $stmt->bindParam(':tipo_prenda', $data['tipo_prenda']);
+        $stmt->bindParam(':talla', $data['talla']);
         $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible']);
         $stmt->bindParam(':precio', $data['precio']);
         $stmt->bindParam(':imagen_url', $data['imagen_url']);

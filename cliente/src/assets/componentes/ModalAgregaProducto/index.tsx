@@ -104,6 +104,7 @@ interface Producto {
   id_inventario?: number;
   id_marca?: number | null;
   tipo_prenda: string;
+  marca: string ;
   cantidad_disponible: number;
   precio: number;
   imagen_url: string;
@@ -117,6 +118,8 @@ const ModalAgregarProducto = ({
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState(0);
   const [imagen, setImagen] = useState("");
+  const [marca, setMarca] = useState("");
+  const [talla, setTalla] = useState("");
   const [cantidad, setCantidad] = useState(0);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState(false);
@@ -140,6 +143,7 @@ const ModalAgregarProducto = ({
           },
           body: JSON.stringify({
             tipo_prenda: nombre,
+            talla: talla,
             cantidad_disponible: cantidad,
             precio: precio,
             imagen_url: imagen,
@@ -195,6 +199,22 @@ const ModalAgregarProducto = ({
             id="imagen"
             value={imagen}
             onChange={(e) => setImagen(e.target.value)}
+            required
+          />
+          <Label htmlFor="marca">Marca:</Label>
+          <Input
+            type="text"
+            id="marca"
+            value={marca}
+            onChange={(e) => setMarca(e.target.value)}
+            required
+          />
+          <Label htmlFor="talla">Talla disponible:</Label>
+          <Input
+            type="number"
+            id="talla"
+            value={talla}
+            onChange={(e) => setTalla(e.target.value)}
             required
           />
           <Label htmlFor="cantidad">Cantidad disponible:</Label>

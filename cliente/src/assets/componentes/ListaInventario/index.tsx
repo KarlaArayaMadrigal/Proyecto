@@ -68,7 +68,16 @@ const ProductoNombre = styled.h2`
   margin-top: 15px;
   text-align: center;
 `;
-
+const Talla = styled.p`
+  font-size: 16px;
+  color: #555;
+  margin-top: 5px;
+`;
+const Marca = styled.p`
+  font-size: 16px;
+  color: #555;
+  margin-top: 5px;
+`;
 const Precio = styled.p`
   font-size: 18px;
   font-weight: bold;
@@ -117,7 +126,9 @@ const BotonAgregar = styled.button`
 interface Producto {
   id_inventario: number;
   id_marca: number | null;
+  marca : string;
   tipo_prenda: string;
+  talla : string;
   cantidad_disponible: number;
   precio: number;
   imagen_url: string;
@@ -200,6 +211,8 @@ const ListaInventario = () => {
           <Cards key={item.id_inventario}>
             <Image src={item.imagen_url} alt={item.tipo_prenda} />
             <ProductoNombre>{item.tipo_prenda}</ProductoNombre>
+            <Marca>Marca: {item.marca}</Marca>
+            <Talla>Talla disponible: {item.talla}</Talla>
             <Cantidad>Cantidad disponible: {item.cantidad_disponible}</Cantidad>
             <Precio>Precio: ₡{item.precio}</Precio>
             <div>

@@ -48,7 +48,7 @@ elseif ($method === 'GET' && $url === '/inventario') {
     $data = json_decode(file_get_contents("php://input"), true);
 
     
-    if ($data && isset($data['tipo_prenda'], $data['cantidad_disponible'], $data['precio'], $data['imagen_url'])) {
+    if ($data && isset($data['marca'], $data['tipo_prenda'], $data['talla'], $data['cantidad_disponible'], $data['precio'], $data['imagen_url'])) {
         $inventarioController->update($id_inventario, $data);
     } else {
         http_response_code(400);

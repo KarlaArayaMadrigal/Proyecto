@@ -121,6 +121,7 @@ interface Producto {
   id_inventario: number;
   id_marca: number | null;
   tipo_prenda: string;
+  marca: string;
   cantidad_disponible: number;
   precio: number;
   imagen_url: string;
@@ -138,6 +139,7 @@ const ModalEditar = ({
   const [nombre, setNombre] = useState(producto.tipo_prenda);
   const [precio, setPrecio] = useState(producto.precio);
   const [imagen, setImagen] = useState(producto.imagen_url);
+  const [marca, setMarca] = useState(producto.marca);
   const [cantidad, setCantidad] = useState(producto.cantidad_disponible);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState(false);
@@ -146,6 +148,7 @@ const ModalEditar = ({
     setNombre(producto.tipo_prenda);
     setPrecio(producto.precio);
     setImagen(producto.imagen_url);
+    setMarca(producto.marca);
     setCantidad(producto.cantidad_disponible);
     setMensaje("");
     setError(false);
@@ -170,6 +173,7 @@ const ModalEditar = ({
           },
           body: JSON.stringify({
             tipo_prenda: nombre,
+            marca: marca,
             cantidad_disponible: cantidad,
             precio: precio,
             imagen_url: imagen,
@@ -185,13 +189,14 @@ const ModalEditar = ({
       setMensaje("Producto actualizado correctamente");
       setError(false);
 
-      
       setTimeout(() => {
-        window.location.reload(); 
+        window.location.reload();
       }, 1500);
     } catch (err) {
       setMensaje(
-        err instanceof Error ? err.message : "Error desconocido al actualizar el producto"
+        err instanceof Error
+          ? err.message
+          : "Error desconocido al actualizar el producto"
       );
       setError(true);
     }
@@ -217,13 +222,14 @@ const ModalEditar = ({
       setMensaje("Producto eliminado correctamente");
       setError(false);
 
-      
       setTimeout(() => {
-        window.location.reload(); 
+        window.location.reload();
       }, 1500);
     } catch (err) {
       setMensaje(
-        err instanceof Error ? err.message : "Error desconocido al eliminar el producto"
+        err instanceof Error
+          ? err.message
+          : "Error desconocido al eliminar el producto"
       );
       setError(true);
     }
@@ -259,6 +265,15 @@ const ModalEditar = ({
             onChange={(e) => setImagen(e.target.value)}
             required
           />
+          <Label htmlFor="marca">Marca:</Label>
+          <Input
+            type="text"
+            id="marca"
+            value={marca}
+            onChange={(e) => setMarca(e.target.value)}
+            required
+          />
+
           <Label htmlFor="cantidad">Cantidad disponible:</Label>
           <Input
             type="number"
@@ -279,4 +294,3 @@ const ModalEditar = ({
 };
 
 export default ModalEditar;
-

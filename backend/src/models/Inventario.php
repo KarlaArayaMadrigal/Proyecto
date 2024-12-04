@@ -37,10 +37,12 @@ class Inventario {
     }
 
     public function createInventario($data) {
-        $query = "INSERT INTO inventario (tipo_prenda, cantidad_disponible, precio, imagen_url) 
-                  VALUES (:tipo_prenda, :cantidad_disponible, :precio, :imagen_url)";
+        $query = "INSERT INTO inventario (marca,tipo_prenda, talla, cantidad_disponible, precio, imagen_url) 
+                  VALUES (:marca, :tipo_prenda, :cantidad_disponible, :precio, :imagen_url)";
         $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':marca', $data['marca'], PDO::PARAM_STR);
         $stmt->bindParam(':tipo_prenda', $data['tipo_prenda'], PDO::PARAM_STR);
+        $stmt->bindParam(':talla', $data['talla'], PDO::PARAM_STR);
         $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible'], PDO::PARAM_INT);
         $stmt->bindParam(':precio', $data['precio'], PDO::PARAM_STR);
         $stmt->bindParam(':imagen_url', $data['imagen_url'], PDO::PARAM_STR);
@@ -50,10 +52,12 @@ class Inventario {
     public function updateInventario($id, $data) {
         try {
             $query = "UPDATE inventario 
-                      SET tipo_prenda = :tipo_prenda, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url
+                      SET :marca = marca, tipo_prenda = :tipo_prenda, talla, cantidad_disponible = :cantidad_disponible, precio = :precio, imagen_url = :imagen_url
                       WHERE id_inventario = :id";
             $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':marca', $data['marca'], PDO::PARAM_STR);
             $stmt->bindParam(':tipo_prenda', $data['tipo_prenda'], PDO::PARAM_STR);
+            $stmt->bindParam(':talla', $data['talla'], PDO::PARAM_STR);
             $stmt->bindParam(':cantidad_disponible', $data['cantidad_disponible'], PDO::PARAM_INT);
             $stmt->bindParam(':precio', $data['precio'], PDO::PARAM_STR);
             $stmt->bindParam(':imagen_url', $data['imagen_url'], PDO::PARAM_STR);

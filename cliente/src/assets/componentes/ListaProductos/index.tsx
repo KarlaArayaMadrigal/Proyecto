@@ -144,7 +144,9 @@ const MensajeExito = styled.p<{ visible: boolean }>`
 interface Producto {
   id_inventario: number;
   id_marca: number | null;
+  marca : string;
   tipo_prenda: string;
+  talla : string;
   cantidad_disponible: number;
   precio: number;
   imagen_url: string;
@@ -220,9 +222,8 @@ const ListaProductos = () => {
           <Cards key={item.id_inventario}>
             <Image src={item.imagen_url} alt={item.tipo_prenda} />
             <ProductoNombre>{item.tipo_prenda}</ProductoNombre>
-            <Marca>Marca: {item.id_marca}</Marca>
-            <TipoPrenda>Tipo: {item.tipo_prenda}</TipoPrenda>
-            <Talla>Cantidad disponible: {item.cantidad_disponible}</Talla>
+            <Marca>Marca: {item.marca}</Marca>
+            <Talla>Cantidad disponible: {item.talla}</Talla>
             <Precio>Precio: ₡{item.precio}</Precio>
             <CantidadDisponible>Cantidad disponible: {item.cantidad_disponible}</CantidadDisponible>
             <BotonComprar
