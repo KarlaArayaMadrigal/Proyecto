@@ -38,18 +38,15 @@ class VentaController
 {
     $data = json_decode(file_get_contents("php://input"), true);
     
-    
-    if (!isset($data['productos']) || empty($data['productos'])) {
+    if (!isset($data) || !is_array($data) || empty($data)) {
         http_response_code(400);
         echo json_encode(['error' => 'Datos incompletos']);
         return;
     }
 
-    
     $venta = new Venta();
     
-    
-    foreach ($data['productos'] as $producto) {
+    foreach ($data as $producto) {
         if (!isset($producto['id_inventario'], $producto['marca'], $producto['precio'], $producto['tipo_prenda'], $producto['cantidad'])) {
             http_response_code(400);
             echo json_encode(['error' => 'Datos de producto incompletos']);
@@ -57,13 +54,17 @@ class VentaController
         }
     }
 
-    if ($venta->create($data['productos'])) {
-        http_response_code(201);
-        echo json_encode(['message' => 'Venta creada exitosamente']);
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'No se pudo crear la venta']);
+    // Aquí puedes crear cada venta en la base de datos
+    foreach ($data as $producto) {
+        if (!$venta->create($producto)) {
+            http_response_code(500);
+            echo json_encode(['error' => 'No se pudo crear la venta']);
+            return;
+        }
     }
+
+    http_response_code(201);
+    echo json_encode(['message' => 'Ventas creadas exitosamente']);
 }
 
     public function update($id)

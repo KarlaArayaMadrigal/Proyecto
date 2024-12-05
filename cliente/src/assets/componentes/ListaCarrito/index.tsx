@@ -3,24 +3,13 @@ import styled from "styled-components";
 
 // Estilos
 const Container = styled.section`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 5px; 
-  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
   background-color: #f4f4f9;
-  justify-items: center; 
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr); 
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr; 
-  }
+  width: 100%;
+  font-family: "Afacad Flux", sans-serif;
 `;
 
 const NoArticulos = styled.p`
@@ -32,7 +21,7 @@ const NoArticulos = styled.p`
   background-color: #f0f0f0;
   padding: 15px;
   border-radius: 8px;
-  margin-top: 280px;
+  margin-top: 100px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   max-width: 80%;
@@ -42,40 +31,40 @@ const NoArticulos = styled.p`
 const Titulo = styled.h1`
   text-align: center;
   font-size: 36px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   font-family: "Afacad Flux", sans-serif;
   color: #333;
 `;
 
 const Cards = styled.div`
-  width: 280px;
-  height: max-content;
-  margin: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 12px;
   background-color: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  width: 80%;  
+  max-width: 1200px;  
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;  
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
-
-  @media (max-width: 768px) {
-    width: 230px;
-  }
 `;
 
+
 const ProductoImagen = styled.img`
-  width: 100%;
-  height: 200px; 
-  object-fit: cover;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
   border-radius: 8px;
+  margin-left: 120px;
 `;
 
 const ProductoNombre = styled.h2`
@@ -87,17 +76,17 @@ const ProductoNombre = styled.h2`
 `;
 
 const Precio = styled.p`
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   font-family: "Afacad Flux", sans-serif;
   color: #2d4d63;
+  margin: 10px 0;
 `;
 
 const InputCantidadContainer = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: "Afacad Flux", sans-serif;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 10px;
 `;
 
@@ -105,7 +94,6 @@ const InputCantidad = styled.input`
   width: 60px;
   padding: 5px;
   border: 1px solid #ccc;
-  font-family: "Afacad Flux", sans-serif;
   border-radius: 5px;
   text-align: center;
   font-size: 16px;
@@ -120,14 +108,14 @@ const ActionContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-top: 10px;
-  align-items: center; 
+  margin-top: 15px;
+  align-items: center;
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-right : 10px; 
+  margin-right: 10px;
 `;
 
 const CheckboxLabel = styled.label`
@@ -141,6 +129,14 @@ const BorrarIcon = styled.img`
   width: 20px;
   height: 20px;
   cursor: pointer;
+`;
+const Total = styled.h2`
+display: flex;
+ font-size: 20px;
+  font-weight: bold;
+  font-family: "Afacad Flux", sans-serif;
+  color: #000000;
+  margin: 10px 15px;
 `;
 
 const SelectButtonContainer = styled.div`
@@ -165,13 +161,30 @@ const SelectButton = styled.button`
   }
 `;
 
-// Interfaces
+const DetallesProductoContainer = styled.div`
+  margin-top: 10px;
+`;
+
+const Detalle = styled.p`
+  font-family: "Afacad Flux", sans-serif;
+  font-size: 16px;
+  color: #333;
+  margin: 5px 0;
+
+  strong {
+    font-weight: bold;
+  }
+`;
+
 interface Producto {
   id_inventario: number;
-  tipo_prenda: string;
-  precio: number; 
-  imagen_url: string;
+  id_marca: number | null;
   marca: string;
+  tipo_prenda: string;
+  talla: string;
+  cantidad_disponible: number;
+  precio: number;
+  imagen_url: string;
 }
 
 interface ProductoSeleccionado {
@@ -179,11 +192,12 @@ interface ProductoSeleccionado {
   cantidad: number;
 }
 
-// Componente
+
 const ListaCarrito: React.FC = () => {
   const [carrito, setCarrito] = useState<Producto[]>([]);
   const [seleccionados, setSeleccionados] = useState<ProductoSeleccionado[]>([]);
   const [checkboxes, setCheckboxes] = useState<{ [key: number]: boolean }>({});
+  const [precioTotal, setPrecioTotal] = useState<number>(0); 
 
   useEffect(() => {
     const storedCarrito = localStorage.getItem("carrito");
@@ -191,11 +205,21 @@ const ListaCarrito: React.FC = () => {
       const productos = JSON.parse(storedCarrito);
       const productosUnicos = productos.filter(
         (producto: Producto, index: number, self: Producto[]) =>
-          self.findIndex((p) => p.id_inventario === producto.id_inventario) === index
+          self.findIndex((p) => p.id_inventario === producto.id_inventario) ===
+          index
       );
       setCarrito(productosUnicos);
     }
   }, []);
+
+  useEffect(() => {
+    
+    const total = seleccionados.reduce((acc, item) => {
+      const producto = carrito.find(p => p.id_inventario === item.id_inventario);
+      return producto ? acc + (producto.precio * item.cantidad) : acc;
+    }, 0);
+    setPrecioTotal(total);
+  }, [seleccionados, carrito]); 
 
   const handleCantidadChange = (id: number, cantidad: number) => {
     setSeleccionados((prev) => {
@@ -212,7 +236,17 @@ const ListaCarrito: React.FC = () => {
   const handleCheckboxChange = (id: number) => {
     setCheckboxes((prev) => {
       const updatedCheckboxes = { ...prev, [id]: !prev[id] };
-      if (!updatedCheckboxes[id]) {
+      if (updatedCheckboxes[id]) {
+        
+        const producto = carrito.find(p => p.id_inventario === id);
+        if (producto) {
+          setSeleccionados((prevSeleccionados) => [
+            ...prevSeleccionados,
+            { id_inventario: id, cantidad: 1 }, 
+          ]);
+        }
+      } else {
+        
         setSeleccionados((prevSeleccionados) =>
           prevSeleccionados.filter((item) => item.id_inventario !== id)
         );
@@ -222,9 +256,12 @@ const ListaCarrito: React.FC = () => {
   };
 
   const handleEliminarProducto = (id: number) => {
-    const newCarrito = carrito.filter((producto) => producto.id_inventario !== id);
+    const newCarrito = carrito.filter(
+      (producto) => producto.id_inventario !== id
+    );
     setCarrito(newCarrito);
     localStorage.setItem("carrito", JSON.stringify(newCarrito));
+    
     setSeleccionados((prevSeleccionados) =>
       prevSeleccionados.filter((item) => item.id_inventario !== id)
     );
@@ -237,135 +274,140 @@ const ListaCarrito: React.FC = () => {
 
   const handleConfirmarCompra = async () => {
     const productosSeleccionados = seleccionados
-        .filter((item) => item.cantidad > 0) 
-        .map((seleccionado) => {
-            const producto = carrito.find(
-                (p) => p.id_inventario === seleccionado.id_inventario
-            );
+      .filter((item) => item.cantidad > 0)
+      .map((seleccionado) => {
+        const producto = carrito.find(
+          (p) => p.id_inventario === seleccionado.id_inventario
+        );
 
-            if (!producto) {
-                console.error(`Producto con id_inventario ${seleccionado.id_inventario} no encontrado en el carrito.`);
-                return null;
-            }
+        if (!producto) {
+          console.error(
+            `Producto con id_inventario ${seleccionado.id_inventario} no encontrado en el carrito.`
+          );
+          return null;
+        }
 
-            return {
-                id_inventario: producto.id_inventario,
-                marca: producto.marca,
-                precio: producto.precio.toString(), // Asegúrate de que el precio sea un string
-                tipo_prenda: producto.tipo_prenda,
-                cantidad: seleccionado.cantidad,
-            };
-        })
-        .filter((item) => item !== null);
+        return {
+          id_inventario: producto.id_inventario,
+          marca: producto.marca,
+          precio: producto.precio.toString(),
+          tipo_prenda: producto.tipo_prenda,
+          cantidad: seleccionado.cantidad,
+        };
+      })
+      .filter((item) => item !== null);
 
     if (productosSeleccionados.length === 0) {
-        alert("Selecciona al menos un producto y cantidad para confirmar la compra.");
-        return;
+      alert(
+        "Selecciona al menos un producto y cantidad para confirmar la compra."
+      );
+      return;
     }
 
     try {
-        const response = await fetch('http://localhost/Proyecto-Desarrollo/backend/index.php/ventas', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ productos: productosSeleccionados }), // Asegúrate de que los datos estén en el formato correcto
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert("Error: " + (errorData.message || "Error desconocido"));
-            return;
+      const response = await fetch(
+        "http://localhost/Proyecto-Desarrollo/backend/index.php/ventas",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productosSeleccionados),
         }
+      );
 
-        const data = await response.json();
-
-        if (data.message) {
-            alert("Compra realizada exitosamente");
-            setCarrito([]);
-            setSeleccionados([]);
-            setCheckboxes({});
-            localStorage.removeItem("carrito");
-        } else {
-            alert("Ocurrió un problema al realizar la compra.");
-        }
+      if (response.ok) {
+        alert("Compra realizada con éxito");
+        localStorage.removeItem("carrito");
+        setCarrito([]); 
+        setSeleccionados([]);
+        setCheckboxes({});
+      } else {
+        const errorData = await response.json();
+        console.error("Error en la compra", errorData);
+        alert(`Hubo un error al realizar la compra: ${errorData.message || response.statusText}`);
+      }
     } catch (error) {
-        if (error instanceof Error) {
-            // Verifica si el error es una instancia de Error
-            alert("Error en la solicitud: " + error.message);
-        } else {
-            // Maneja otros tipos de errores desconocidos
-            alert("Ocurrió un error desconocido.");
-        }
+      console.error("Error en la compra", error);
+      alert("Hubo un error al realizar la compra.");
     }
-};
+  };
 
-  
-  
+  if (carrito.length === 0) {
+    return <NoArticulos>No tienes productos en tu carrito.</NoArticulos>;
+  }
 
   return (
-    <div>
-      <Titulo>Lista de Productos en el Carrito</Titulo>
-      {carrito.length === 0 ? (
-        <NoArticulos>No hay artículos en el carrito.</NoArticulos>
-      ) : (
-        <>
-          <Container>
-            {carrito.map((producto) => (
-              <Cards key={producto.id_inventario}>
-                <ProductoImagen src={producto.imagen_url} alt={producto.tipo_prenda} />
-                <ProductoNombre>{producto.tipo_prenda}</ProductoNombre>
-                <Precio>
-                  $
-                  {typeof producto.precio === "number" 
-                    ? producto.precio.toFixed(2) 
-                    : "Precio no disponible"}
-                </Precio>
-                <InputCantidadContainer>
-                  <label htmlFor={`cantidad-${producto.id_inventario}`}>Cantidad:</label>
-                  <InputCantidad
-                    id={`cantidad-${producto.id_inventario}`}
-                    type="number"
-                    min="1"
-                    onChange={(e) =>
-                      handleCantidadChange(
-                        producto.id_inventario,
-                        parseInt(e.target.value, 10)
-                      )
-                    }
-                  />
-                </InputCantidadContainer>
-                <ActionContainer>
-                  <CheckboxContainer>
-                    <input
-                      type="checkbox"
-                      id={`checkbox-${producto.id_inventario}`}
-                      checked={checkboxes[producto.id_inventario] || false}
-                      onChange={() => handleCheckboxChange(producto.id_inventario)}
-                    />
-                    <CheckboxLabel htmlFor={`checkbox-${producto.id_inventario}`}>
-                      Seleccionar
-                    </CheckboxLabel>
-                  </CheckboxContainer>
-                  <BorrarIcon
-                    src='../assets/img/borrar.png'
-                    alt="Eliminar"
-                    onClick={() => handleEliminarProducto(producto.id_inventario)}
-                  />
-                </ActionContainer>
-              </Cards>
-            ))}
-          </Container>
-          <SelectButtonContainer>
-            <SelectButton onClick={handleConfirmarCompra}>
-              Confirmar Compra
-            </SelectButton>
-          </SelectButtonContainer>
-        </>
-      )}
-    </div>
+    <Container>
+      <Titulo>Carrito de Compras</Titulo>
+      {carrito.map((producto) => (
+        <Cards key={producto.id_inventario}>
+          <ProductoImagen
+            src={producto.imagen_url}
+            alt={`Imagen de ${producto.marca}`}
+          />
+          <div>
+            <Precio>Precio: ₡{producto.precio}</Precio>
+            <DetallesProductoContainer>
+              <ProductoNombre>Marca: {producto.marca}</ProductoNombre>
+              <Detalle>
+                <strong>Tipo de prenda:</strong> {producto.tipo_prenda}
+              </Detalle>
+              <Detalle>
+                <strong>Talla:</strong> {producto.talla}
+              </Detalle>
+              <Detalle>
+                <strong>Cantidad disponible:</strong> {producto.cantidad_disponible}
+              </Detalle>
+            </DetallesProductoContainer>
+          </div>
+          <div>
+            <InputCantidadContainer>
+              <label htmlFor={`cantidad-${producto.id_inventario}`}>
+                Cantidad:
+              </label>
+              <InputCantidad
+                id={`cantidad-${producto.id_inventario}`}
+                type="number"
+                min="1"
+                max={producto.cantidad_disponible}
+                value={seleccionados.find(
+                  (item) => item.id_inventario === producto.id_inventario
+                )?.cantidad || 0}
+                onChange={(e) =>
+                  handleCantidadChange(
+                    producto.id_inventario,
+                    parseInt(e.target.value, 10)
+                  )
+                }
+              />
+            </InputCantidadContainer>
+            <ActionContainer>
+              <CheckboxContainer>
+                <input
+                  type="checkbox"
+                  checked={checkboxes[producto.id_inventario] || false}
+                  onChange={() => handleCheckboxChange(producto.id_inventario)}
+                />
+                <CheckboxLabel>Seleccionar</CheckboxLabel>
+              </CheckboxContainer>
+              <BorrarIcon
+                src="/src/assets/img/borrar.png"
+                alt="Eliminar"
+                onClick={() => handleEliminarProducto(producto.id_inventario)}
+              />
+            </ActionContainer>
+          </div>
+        </Cards>
+      ))}
+      <SelectButtonContainer>
+        <SelectButton onClick={handleConfirmarCompra}>
+          Confirmar Compra
+        </SelectButton>
+      </SelectButtonContainer>
+      <Total>Total a pagar: ₡{precioTotal.toFixed(2)}</Total>
+    </Container>
   );
 };
 
 export default ListaCarrito;
-

@@ -86,7 +86,7 @@ const DecoracionS = styled.img`
 const Ventas = styled.div`
   position: absolute;
   top: 115%;
-  left: 60px;
+  left: 10px;
   display: flex;
   align-items: center;
   gap: 20px;
