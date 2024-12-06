@@ -2,6 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import Header from "../componentes/Header";
 import styled, { createGlobalStyle } from "styled-components";
 import ListaVentas from "../componentes/ListaVentas";
+import ListaMarcaVentas from "../componentes/ListaMarcaVentas";
+import ListaStock from "../componentes/ListaStock";
+import TopVentas from "../componentes/TopVentas";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -18,6 +21,9 @@ const Ventas = () => {
       <GlobalStyle />
       <Header />
       <ListaVentas/>
+      <ListaMarcaVentas/>
+      <ListaStock/>
+      <TopVentas/>
     </>
   );
 };

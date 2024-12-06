@@ -8,6 +8,7 @@ const Container = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-family: "Afacad Flux", sans-serif;
+  text-align: center;
 `;
 
 const Title = styled.h2`
@@ -19,19 +20,19 @@ const Title = styled.h2`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
 `;
 
 const TableHeader = styled.th`
   padding: 10px;
   background-color: #f2f2f2;
   color: #333;
-  border: 1px solid #ddd;
+  border: 1px solid #000000;
 `;
 
 const TableData = styled.td`
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #000000;
   color: #333;
 `;
 type Venta = {
@@ -54,7 +55,6 @@ const ListaVentas: React.FC = () => {
           "http://localhost/Proyecto-Desarrollo/backend/index.php/ventas"
         );
 
-        // Verificar si la respuesta es exitosa
         if (!response.ok) {
           throw new Error(
             `Error en la red: ${response.status} ${response.statusText}`

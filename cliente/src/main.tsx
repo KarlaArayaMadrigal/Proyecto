@@ -6,7 +6,7 @@ import Carrito from './assets/pages/Carrito.tsx';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import Producto from './assets/pages/Productos.tsx';
-import Ventas from './assets/pages/Promociones.tsx';
+import Ventas from './assets/pages/Listas.tsx';
 import Inventario from './assets/pages/Inventario.tsx';
 
 createRoot(document.getElementById('root')!).render(
