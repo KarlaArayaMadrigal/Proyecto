@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-10-2024 a las 04:02:04
--- Versión del servidor: 10.4.32-MariaDB
+-- Tiempo de generación: 18-12-2024 a las 04:40:22
+-- Versión del servidor: 9.0.0
 -- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -18,8 +18,25 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `tienda`
+-- Base de datos: `tienda_luka`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `carrito`
+--
+
+CREATE TABLE `carrito` (
+  `id_carrito` int DEFAULT NULL,
+  `id_producto` int DEFAULT NULL,
+  `id_marca` int DEFAULT NULL,
+  `id_venta` int DEFAULT NULL,
+  `precio` int NOT NULL,
+  `imagen_url` varchar(20) NOT NULL,
+  `cantidad_disponible` int NOT NULL,
+  `tipo_prenda` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -28,22 +45,27 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `inventario` (
-  `id_inventario` int(11) NOT NULL,
-  `id_marca` int(11) DEFAULT NULL,
-  `tipo_prenda` varchar(100) NOT NULL,
-  `cantidad_disponible` int(11) NOT NULL,
-  `precio` int(11) NOT NULL
+  `id_inventario` int NOT NULL,
+  `id_marca` int DEFAULT NULL,
+  `marca` varchar(244) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tipo_prenda` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `talla` varchar(210) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cantidad_disponible` int NOT NULL,
+  `precio` int NOT NULL,
+  `imagen_url` text COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `inventario`
 --
 
-INSERT INTO `inventario` (`id_inventario`, `id_marca`, `tipo_prenda`, `cantidad_disponible`, `precio`) VALUES
-(1, 1, 'Camiseta', 50, 8900),
-(2, 2, 'Pantalón', 26, 22000),
-(3, 3, 'Zapatillas', 39, 32700),
-(4, 4, 'Chaqueta', 15, 51000);
+INSERT INTO `inventario` (`id_inventario`, `id_marca`, `marca`, `tipo_prenda`, `talla`, `cantidad_disponible`, `precio`, `imagen_url`) VALUES
+(1, 1, 'Gucci', 'Falda Rosada', '1', 6, 1200, '/images/falda.png'),
+(14, NULL, 'Levi\'s', 'Pantalon', '12', 20, 1110, '/images/pantalon.png'),
+(15, NULL, 'Levi\'s', 'Camisa', '16', 10, 11000, '/images/camisa.png'),
+(16, NULL, 'Adidas', 'Gorra', '16', 6, 15000, '/images/gorra.png'),
+(17, NULL, 'Adidas', 'Tenis', '16', 20, 22500, '/images/zapatos.png'),
+(18, NULL, 'Puma', 'Short', '32', 31, 11500, '/images/short.png');
 
 -- --------------------------------------------------------
 
@@ -52,9 +74,9 @@ INSERT INTO `inventario` (`id_inventario`, `id_marca`, `tipo_prenda`, `cantidad_
 --
 
 CREATE TABLE `marcas` (
-  `id_marca` int(11) NOT NULL,
-  `nombre_marca` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_marca` int DEFAULT NULL,
+  `nombre_marca` varchar(35) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `marcas`
@@ -62,44 +84,96 @@ CREATE TABLE `marcas` (
 
 INSERT INTO `marcas` (`id_marca`, `nombre_marca`) VALUES
 (1, 'Nike'),
-(2, 'Adidas'),
-(3, 'Puma'),
-(4, 'Levi’s'),
-(5, 'Reebok');
+(2, 'Gucci'),
+(3, 'LEVIS');
 
 -- --------------------------------------------------------
 
 --
--- Estructura Stand-in para la vista `marcasconventas`
+-- Estructura Stand-in para la vista `marcas_con_ventas`
 -- (Véase abajo para la vista actual)
 --
-CREATE TABLE `marcasconventas` (
-`id_marca` int(11)
-,`nombre_marca` varchar(100)
+CREATE TABLE `marcas_con_ventas` (
+`marca` varchar(255)
 );
 
 -- --------------------------------------------------------
 
 --
--- Estructura Stand-in para la vista `prendasvendidasstock`
+-- Estructura Stand-in para la vista `prendas_vendidas_stock`
 -- (Véase abajo para la vista actual)
 --
-CREATE TABLE `prendasvendidasstock` (
-`tipo_prenda` varchar(100)
-,`cantidad_disponible` int(11)
-,`total_vendido` decimal(32,0)
+CREATE TABLE `prendas_vendidas_stock` (
+`id_inventario` int
+,`marca` varchar(244)
+,`tipo_prenda` varchar(100)
+,`talla` varchar(210)
+,`precio_unitario` int
+,`cantidad_vendida` decimal(32,0)
+,`cantidad_restante` decimal(33,0)
 );
 
 -- --------------------------------------------------------
 
 --
--- Estructura Stand-in para la vista `topmarcasvendidas`
+-- Estructura de tabla para la tabla `productos`
+--
+
+CREATE TABLE `productos` (
+  `id_producto` int NOT NULL,
+  `id_marca` int DEFAULT NULL,
+  `marca` varchar(35) DEFAULT NULL,
+  `articulo` varchar(50) NOT NULL,
+  `talla` varchar(10) NOT NULL,
+  `precio` varchar(15) DEFAULT NULL,
+  `imagen_url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`id_producto`, `id_marca`, `marca`, `articulo`, `talla`, `precio`, `imagen_url`) VALUES
+(1, 1, 'Nike', 'Falda', 'S', '1200', '/images/falda.png'),
+(2, 2, 'FILA', 'Camisa', 'M', '3500', '/images/camisa.png'),
+(3, 3, 'Levis', 'Pantalón', 'M', '7500', '/images/pantalon.png'),
+(4, 4, 'Puma', 'Zapatos', '40', '22000', '/images/zapatos.png');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `top5marcasvendidas`
 -- (Véase abajo para la vista actual)
 --
-CREATE TABLE `topmarcasvendidas` (
-`nombre_marca` varchar(100)
-,`total_vendido` decimal(32,0)
+CREATE TABLE `top5marcasvendidas` (
+`marca` varchar(255)
+,`total_ventas` decimal(32,0)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id_usuario` int NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `correo` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id_usuario`, `nombre`, `correo`, `password`) VALUES
+(1, 'Nombre de Prueba', 'correo@ejemplo.com', 'contraseña123'),
+(2, 'karla', 'holaaa@gmail.com', '$2y$10$7s/2rMBUihzMoP/U.ZjllOK3qAO9t9GpufACYltTGm/Ibdt2a1m5i'),
+(3, 'karla', 'holaaa@gmail.com', '$2y$10$4mLaE/q2WAVBZPlHqm0cBuqeFKaoff9FH.rNCGXTwPBCPbU1bIsHS'),
+(4, 'karla', 'holaaa@gmail.com', '$2y$10$07XHYi.D1DEjPLIcKCOV5uEDl5K0dbcAAA4jLr4YlJK17qwuKi9rG'),
+(5, 'karla', 'holaaa@gmail.com', '$2y$10$G2y/GS.1yB9h5QOqlKFqQulwYixVgFHUlheW45thJcdrPEWNblxhe'),
+(6, 'holaaaa', 'jisas@gmail.com', '$2y$10$.8cDyy0AsIXmHSimFCFKVurHc./Z13rN8wVIehya63zb.ZAiFQlM6');
 
 -- --------------------------------------------------------
 
@@ -108,73 +182,97 @@ CREATE TABLE `topmarcasvendidas` (
 --
 
 CREATE TABLE `ventas` (
-  `id_venta` int(11) NOT NULL,
-  `id_inventario` int(11) DEFAULT NULL,
-  `cantidad_vendida` int(11) NOT NULL,
-  `fecha_venta` date NOT NULL,
-  `total` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_venta` int NOT NULL,
+  `marca` varchar(255) NOT NULL,
+  `precio` varchar(15) DEFAULT NULL,
+  `id_inventario` int NOT NULL,
+  `tipo_prenda` varchar(255) NOT NULL,
+  `cantidad` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `ventas`
 --
 
-INSERT INTO `ventas` (`id_venta`, `id_inventario`, `cantidad_vendida`, `fecha_venta`, `total`) VALUES
-(1, 1, 5, '2024-10-01', 44500),
-(2, 2, 3, '2024-10-02', 66000),
-(3, 3, 2, '2024-10-03', 65400),
-(4, 4, 1, '2024-10-03', 51000);
+INSERT INTO `ventas` (`id_venta`, `marca`, `precio`, `id_inventario`, `tipo_prenda`, `cantidad`) VALUES
+(24, 'Gucci', '1200', 1, 'Falda Rosada', 3),
+(25, 'Adidas', '22500', 17, 'Tenis', 2),
+(26, 'Fila', '25000', 26, 'Camisa', 1),
+(27, 'Gucci', '1200', 1, 'Falda Rosada', 1),
+(28, 'Levi\'s', '11000', 15, 'Camisa', 1),
+(29, 'Adidas', '15000', 16, 'Gorra', 1),
+(30, 'Puma', '11500', 18, 'Short', 2),
+(31, 'Gucci', '1200', 1, 'Falda Rosada', 1),
+(32, 'Gucci', '1200', 1, 'Falda Rosada', 1);
 
 -- --------------------------------------------------------
 
 --
--- Estructura para la vista `marcasconventas`
+-- Estructura para la vista `marcas_con_ventas`
 --
-DROP TABLE IF EXISTS `marcasconventas`;
+DROP TABLE IF EXISTS `marcas_con_ventas`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `marcasconventas`  AS SELECT DISTINCT `m`.`id_marca` AS `id_marca`, `m`.`nombre_marca` AS `nombre_marca` FROM ((`ventas` `v` join `inventario` `i` on(`v`.`id_inventario` = `i`.`id_inventario`)) join `marcas` `m` on(`i`.`id_marca` = `m`.`id_marca`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `marcas_con_ventas`  AS SELECT DISTINCT `ventas`.`marca` AS `marca` FROM `ventas` WHERE (`ventas`.`cantidad` > 0) ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura para la vista `prendasvendidasstock`
+-- Estructura para la vista `prendas_vendidas_stock`
 --
-DROP TABLE IF EXISTS `prendasvendidasstock`;
+DROP TABLE IF EXISTS `prendas_vendidas_stock`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `prendasvendidasstock`  AS SELECT `i`.`tipo_prenda` AS `tipo_prenda`, `i`.`cantidad_disponible` AS `cantidad_disponible`, sum(`v`.`cantidad_vendida`) AS `total_vendido` FROM (`inventario` `i` join `ventas` `v` on(`i`.`id_inventario` = `v`.`id_inventario`)) GROUP BY `i`.`tipo_prenda`, `i`.`cantidad_disponible` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `prendas_vendidas_stock`  AS SELECT `i`.`id_inventario` AS `id_inventario`, `i`.`marca` AS `marca`, `i`.`tipo_prenda` AS `tipo_prenda`, `i`.`talla` AS `talla`, `i`.`precio` AS `precio_unitario`, sum(`v`.`cantidad`) AS `cantidad_vendida`, (`i`.`cantidad_disponible` - sum(`v`.`cantidad`)) AS `cantidad_restante` FROM (`ventas` `v` join `inventario` `i` on((`v`.`id_inventario` = `i`.`id_inventario`))) GROUP BY `i`.`id_inventario`, `i`.`marca`, `i`.`tipo_prenda`, `i`.`talla`, `i`.`precio`, `i`.`cantidad_disponible` ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura para la vista `topmarcasvendidas`
+-- Estructura para la vista `top5marcasvendidas`
 --
-DROP TABLE IF EXISTS `topmarcasvendidas`;
+DROP TABLE IF EXISTS `top5marcasvendidas`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `topmarcasvendidas`  AS SELECT `m`.`nombre_marca` AS `nombre_marca`, sum(`v`.`cantidad_vendida`) AS `total_vendido` FROM ((`ventas` `v` join `inventario` `i` on(`v`.`id_inventario` = `i`.`id_inventario`)) join `marcas` `m` on(`i`.`id_marca` = `m`.`id_marca`)) GROUP BY `m`.`nombre_marca` ORDER BY sum(`v`.`cantidad_vendida`) DESC LIMIT 0, 5 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `top5marcasvendidas`  AS SELECT `ventas`.`marca` AS `marca`, sum(`ventas`.`cantidad`) AS `total_ventas` FROM `ventas` GROUP BY `ventas`.`marca` ORDER BY `total_ventas` DESC LIMIT 0, 5 ;
 
 --
 -- Índices para tablas volcadas
 --
 
 --
+-- Indices de la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  ADD UNIQUE KEY `id_carrito` (`id_carrito`);
+
+--
 -- Indices de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  ADD PRIMARY KEY (`id_inventario`),
-  ADD KEY `id_marca` (`id_marca`);
+  ADD PRIMARY KEY (`id_inventario`);
 
 --
 -- Indices de la tabla `marcas`
 --
 ALTER TABLE `marcas`
-  ADD PRIMARY KEY (`id_marca`);
+  ADD UNIQUE KEY `id_marca` (`id_marca`);
+
+--
+-- Indices de la tabla `productos`
+--
+ALTER TABLE `productos`
+  ADD UNIQUE KEY `id_producto` (`id_producto`),
+  ADD KEY `id_marca_idx` (`id_marca`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD UNIQUE KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `ventas`
 --
 ALTER TABLE `ventas`
   ADD PRIMARY KEY (`id_venta`),
-  ADD KEY `id_inventario` (`id_inventario`);
+  ADD UNIQUE KEY `id_venta` (`id_venta`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -184,35 +282,25 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `id_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_inventario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT de la tabla `marcas`
+-- AUTO_INCREMENT de la tabla `productos`
 --
-ALTER TABLE `marcas`
-  MODIFY `id_marca` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `productos`
+  MODIFY `id_producto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `inventario`
---
-ALTER TABLE `inventario`
-  ADD CONSTRAINT `inventario_ibfk_1` FOREIGN KEY (`id_marca`) REFERENCES `marcas` (`id_marca`);
-
---
--- Filtros para la tabla `ventas`
---
-ALTER TABLE `ventas`
-  ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`id_inventario`) REFERENCES `inventario` (`id_inventario`);
+  MODIFY `id_venta` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
